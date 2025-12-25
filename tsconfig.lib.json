@@ -4,7 +4,7 @@
   "exclude": ["src/lib/**/__tests__/*"],
   "compilerOptions": {
     "declaration": true,
-    "declarationMap": true,
+    "declarationMap": false,
     "noEmit": false,
     "emitDeclarationOnly": true,
     "outDir": "dist",

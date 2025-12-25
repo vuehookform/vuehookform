@@ -37,7 +37,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/vuehookform/vuehookform.git"
+    "url": "git+https://github.com/vuehookform/core.git"
   },
   "keywords": [
     "vue",
@@ -53,9 +53,9 @@
   "author": "",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/vuehookform/vuehookform/issues"
+    "url": "https://github.com/vuehookform/core/issues"
   },
-  "homepage": "https://github.com/vuehookform/vuehookform#readme",
+  "homepage": "https://github.com/vuehookform/core#readme",
   "peerDependencies": {
     "vue": "^3.3.0",
     "zod": "^3.0.0 || ^4.0.0"
