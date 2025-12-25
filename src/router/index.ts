@@ -1,11 +1,11 @@
 import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
 import { categories, getDefaultRoute } from '@/data/categories'
 
-// Generate routes dynamically from categories
-const exampleRoutes: RouteRecordRaw[] = categories.flatMap((category) =>
+// Generate example routes as children of DocsLayout
+const docsChildRoutes: RouteRecordRaw[] = categories.flatMap((category) =>
   category.examples.map((example) => ({
-    path: `/examples/${category.id}/${example.id}`,
-    name: `example-${category.id}-${example.id}`,
+    path: `${category.id}/${example.id}`,
+    name: `docs-${category.id}-${example.id}`,
     component: example.component,
     meta: {
       categoryId: category.id,
@@ -22,29 +22,41 @@ const router = createRouter({
       return savedPosition
     }
 
-    // Initial page load (no previous route): show header at top
-    if (!from.name) {
-      return { top: 0 }
-    }
-
-    // Example-to-example navigation: scroll to main-layout (below sticky nav)
-    return {
-      el: '.main-layout',
-      top: 112,
-      behavior: 'instant',
-    }
+    // Always scroll to top
+    return { top: 0 }
   },
   routes: [
-    // Redirect root to first example
+    // Landing page
     {
       path: '/',
-      redirect: () => {
-        const { category, example } = getDefaultRoute()
-        return `/examples/${category}/${example}`
-      },
+      name: 'landing',
+      component: () => import('@/views/LandingPage.vue'),
     },
-    // All example routes
-    ...exampleRoutes,
+
+    // Docs section with layout wrapper
+    {
+      path: '/docs',
+      component: () => import('@/layouts/DocsLayout.vue'),
+      children: [
+        // Redirect /docs to first example
+        {
+          path: '',
+          redirect: () => {
+            const { category, example } = getDefaultRoute()
+            return `/docs/${category}/${example}`
+          },
+        },
+        // All example routes as children
+        ...docsChildRoutes,
+      ],
+    },
+
+    // Legacy redirect: /examples/:cat/:ex -> /docs/:cat/:ex
+    {
+      path: '/examples/:category/:example',
+      redirect: (to) => `/docs/${to.params.category}/${to.params.example}`,
+    },
+
     // Catch-all redirect
     {
       path: '/:pathMatch(.*)*',

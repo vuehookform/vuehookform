@@ -1,1 +1,7 @@
-@import './tailwind-config.css';
+@import 'tailwindcss';
+
+body {
+  font-family:
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  min-height: 100vh;
+}
