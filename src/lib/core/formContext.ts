@@ -17,6 +17,15 @@ export interface FieldArrayState {
 }
 
 /**
+ * Cached event handlers for a field to prevent recreation on every render
+ */
+export interface FieldHandlers {
+  onInput: (e: Event) => Promise<void>
+  onBlur: (e: Event) => Promise<void>
+  refCallback: (el: unknown) => void
+}
+
+/**
  * Shared form context containing all reactive state
  * This is passed to sub-modules via dependency injection
  */
@@ -27,8 +36,8 @@ export interface FormContext<FormValues> {
 
   // Form state
   errors: ShallowRef<FieldErrors<FormValues>>
-  touchedFields: Ref<Record<string, boolean>>
-  dirtyFields: Ref<Record<string, boolean>>
+  touchedFields: ShallowRef<Record<string, boolean>>
+  dirtyFields: ShallowRef<Record<string, boolean>>
   isSubmitting: Ref<boolean>
   isLoading: Ref<boolean>
   submitCount: Ref<number>
@@ -37,6 +46,7 @@ export interface FormContext<FormValues> {
   fieldRefs: Map<string, Ref<HTMLInputElement | null>>
   fieldOptions: Map<string, RegisterOptions>
   fieldArrays: Map<string, FieldArrayState>
+  fieldHandlers: Map<string, FieldHandlers>
 
   // Debounce tracking for async validation
   debounceTimers: Map<string, ReturnType<typeof setTimeout>>
@@ -82,9 +92,10 @@ export function createFormContext<TSchema extends ZodType>(
   }
 
   // Form state - using Record instead of Set for per-field tracking
+  // Use shallowRef for object state to prevent excessive reactivity triggering
   const errors = shallowRef<FieldErrors<FormValues>>({})
-  const touchedFields = ref<Record<string, boolean>>({})
-  const dirtyFields = ref<Record<string, boolean>>({})
+  const touchedFields = shallowRef<Record<string, boolean>>({})
+  const dirtyFields = shallowRef<Record<string, boolean>>({})
   const isSubmitting = ref(false)
   const submitCount = ref(0)
 
@@ -94,6 +105,9 @@ export function createFormContext<TSchema extends ZodType>(
 
   // Field array tracking for dynamic arrays
   const fieldArrays = new Map<string, FieldArrayState>()
+
+  // Cached event handlers to prevent recreation on every render
+  const fieldHandlers = new Map<string, FieldHandlers>()
 
   // Debounce tracking for async validation
   const debounceTimers = new Map<string, ReturnType<typeof setTimeout>>()
@@ -111,6 +125,7 @@ export function createFormContext<TSchema extends ZodType>(
     fieldRefs,
     fieldOptions,
     fieldArrays,
+    fieldHandlers,
     debounceTimers,
     validationRequestIds,
     options: options as UseFormOptions<ZodType>,
