@@ -50,12 +50,12 @@
     "hook",
     "react-hook-form"
   ],
-  "author": "",
+  "author": "jonnasson",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/vuehookform/core/issues"
   },
-  "homepage": "https://github.com/vuehookform/core#readme",
+  "homepage": "https://vuehookform.com",
   "peerDependencies": {
     "vue": "^3.3.0",
     "zod": "^3.0.0 || ^4.0.0"
