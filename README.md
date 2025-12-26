@@ -2,6 +2,8 @@
 
 A TypeScript-first form library for Vue 3, inspired by React Hook Form.
 
+[![npm version](https://img.shields.io/npm/v/@vuehookform/core)](https://www.npmjs.com/package/@vuehookform/core) [![CI](https://img.shields.io/github/actions/workflow/status/vuehookform/core/ci.yml?branch=main&label=CI)](https://github.com/vuehookform/core/actions/workflows/ci.yml) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) [![TypeScript](https://img.shields.io/badge/TypeScript-5.9-blue?logo=typescript&logoColor=white)](https://www.typescriptlang.org/) [![Coverage](https://img.shields.io/badge/coverage-90%25+-brightgreen)](https://github.com/vuehookform/core)
+
 ## Features
 
 - **TypeScript First** - Perfect type inference with zero manual typing
@@ -87,7 +89,7 @@ const addresses = fields('addresses')
 ```typescript
 useForm({
   schema,
-  mode: 'onSubmit',  // Only validate on submit (default)
+  mode: 'onSubmit', // Only validate on submit (default)
   // mode: 'onBlur',    // Validate when field loses focus
   // mode: 'onChange',  // Validate on every keystroke
   // mode: 'onTouched', // Validate after field is touched
@@ -100,19 +102,19 @@ useForm({
 
 ```typescript
 const {
-  register,      // Register input field
-  handleSubmit,  // Create submit handler with validation
-  formState,     // Reactive form state (errors, isSubmitting, etc.)
-  fields,        // Manage dynamic field arrays
-  setValue,      // Programmatically set field value
-  getValue,      // Get current field value
-  reset,         // Reset form to default values
-  watch,         // Watch field value changes
-  validate,      // Manually trigger validation
+  register, // Register input field
+  handleSubmit, // Create submit handler with validation
+  formState, // Reactive form state (errors, isSubmitting, etc.)
+  fields, // Manage dynamic field arrays
+  setValue, // Programmatically set field value
+  getValue, // Get current field value
+  reset, // Reset form to default values
+  watch, // Watch field value changes
+  validate, // Manually trigger validation
 } = useForm({
-  schema,                    // Zod schema for validation
-  defaultValues: {},         // Initial form values
-  mode: 'onSubmit',          // When to validate
+  schema, // Zod schema for validation
+  defaultValues: {}, // Initial form values
+  mode: 'onSubmit', // When to validate
 })
 ```
 
