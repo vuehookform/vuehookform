@@ -6,12 +6,19 @@ on:
   pull_request:
     branches: [main]
 
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
 permissions:
   contents: read
 
 jobs:
   test:
+    name: Typecheck, Lint & Tests
     runs-on: ubuntu-latest
+    env:
+      CI: true
 
     steps:
       - name: Checkout
@@ -20,19 +27,20 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: '20'
           cache: 'npm'
+          cache-dependency-path: package-lock.json
 
       - name: Install dependencies
-        run: npm ci
+        run: npm ci --prefer-offline --no-audit --progress=false
 
       - name: Type Check
         run: npm run type-check
 
-      - name: Lint
+      - name: Lint (ESLint)
         run: npm run lint:eslint
 
-      - name: Test
+      - name: Run Tests
         run: npm run test:run
         env:
           ROLLDOWN_DISABLE_NATIVE: '1'
