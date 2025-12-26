@@ -21,7 +21,8 @@ jobs:
           node-version: 22
           registry-url: 'https://registry.npmjs.org'
 
-      - run: npm ci
+      - name: Clean and install dependencies
+        run: rm -rf node_modules package-lock.json && npm install
 
       - run: npm run test:run
 
