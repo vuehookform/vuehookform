@@ -20,7 +20,7 @@ jobs:
           node-version: 22
           cache: 'npm'
 
-      - run: npm ci
+      - run: npm ci --force
 
       - name: Type Check
         run: npm run type-check
