@@ -19,6 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       CI: true
+      ROLLDOWN_DISABLE_NATIVE: '1'
 
     steps:
       - name: Checkout
@@ -27,7 +28,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '24'
           cache: 'npm'
           cache-dependency-path: package-lock.json
 
