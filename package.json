@@ -58,6 +58,10 @@
     "url": "https://github.com/vuehookform/core/issues"
   },
   "homepage": "https://vuehookform.com",
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
   "peerDependencies": {
     "vue": "^3.3.0",
     "zod": "^3.0.0 || ^4.0.0"
