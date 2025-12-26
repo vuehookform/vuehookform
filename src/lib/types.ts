@@ -1,4 +1,4 @@
-import type { ComputedRef, MaybeRef, Ref } from 'vue'
+import type { ComponentPublicInstance, ComputedRef, MaybeRef, Ref } from 'vue'
 import type { ZodType, z } from 'zod'
 
 /**
@@ -12,8 +12,38 @@ export type ValidationMode = 'onSubmit' | 'onBlur' | 'onChange' | 'onTouched'
 export type InferSchema<T extends ZodType> = z.infer<T>
 
 /**
- * Generate all possible paths for a nested object type
- * e.g., { user: { name: string } } => 'user' | 'user.name'
+ * Alias for InferSchema - extracts form value type from schema.
+ * Use this when you need the actual form data type.
+ *
+ * @example
+ * const schema = z.object({ email: z.string(), age: z.number() })
+ * type MyFormValues = FormValues<typeof schema>
+ * // Result: { email: string; age: number }
+ */
+export type FormValues<TSchema extends ZodType> = InferSchema<TSchema>
+
+/**
+ * Extract the element type from an array type.
+ * Returns `never` if T is not an array.
+ *
+ * @example
+ * type Item = ArrayElement<string[]>  // string
+ * type Never = ArrayElement<string>   // never
+ */
+export type ArrayElement<T> = T extends Array<infer U> ? U : never
+
+/**
+ * Generate all possible dot-notation paths for a nested object type.
+ * Provides IDE autocomplete for valid field names.
+ *
+ * @example
+ * type Form = { user: { name: string; age: number }; tags: string[] }
+ * type FormPaths = Path<Form>
+ * // Result: 'user' | 'user.name' | 'user.age' | 'tags'
+ *
+ * @example Using with register
+ * register('user.name')  // ✅ Valid - autocomplete suggests this
+ * register('user.invalid')  // ❌ TypeScript error
  */
 export type Path<T> = T extends object
   ? {
@@ -24,18 +54,53 @@ export type Path<T> = T extends object
   : never
 
 /**
- * Get the type at a given path
- * e.g., PathValue<{ user: { name: string } }, 'user.name'> => string
+ * Type alias for valid field paths in a form.
+ * Provides autocomplete for all dot-notation paths.
+ *
+ * @example
+ * type MyPaths = FormPath<typeof schema>
+ * // Use with functions that accept field paths
+ */
+export type FormPath<TSchema extends ZodType> = Path<FormValues<TSchema>>
+
+/**
+ * Get array field paths (fields that are arrays).
+ * Useful for the fields() method which only works with array fields.
+ *
+ * @example
+ * type Form = { name: string; addresses: Address[] }
+ * type ArrayFields = ArrayPath<Form>  // 'addresses'
+ */
+export type ArrayPath<T> = {
+  [K in Path<T>]: PathValue<T, K> extends Array<unknown> ? K : never
+}[Path<T>]
+
+/**
+ * Extract the value type at a given dot-notation path.
+ * Used internally to ensure setValue/getValue have correct types.
+ * Supports numeric string indices for array access (e.g., 'items.0.name').
+ *
+ * @example
+ * type Form = { user: { name: string }; items: { id: number }[] }
+ * type NameType = PathValue<Form, 'user.name'>    // string
+ * type ItemType = PathValue<Form, 'items.0'>      // { id: number }
+ * type ItemId = PathValue<Form, 'items.0.id'>     // number
  */
 export type PathValue<T, P extends string> = P extends `${infer K}.${infer Rest}`
   ? K extends keyof T
-    ? Rest extends Path<T[K]>
-      ? PathValue<T[K], Rest>
+    ? PathValue<T[K], Rest>
+    : T extends Array<infer U>
+      ? K extends `${number}`
+        ? PathValue<U, Rest>
+        : never
       : never
-    : never
   : P extends keyof T
     ? T[P]
-    : never
+    : T extends Array<infer U>
+      ? P extends `${number}`
+        ? U
+        : never
+      : never
 
 /**
  * Single field error with type and message
@@ -50,7 +115,21 @@ export interface FieldError {
 }
 
 /**
- * Field error value - can be a simple string (backward compatible) or structured error
+ * Field error value - supports both simple strings and structured errors.
+ *
+ * - When `criteriaMode: 'firstError'` (default): Errors are typically strings
+ * - When `criteriaMode: 'all'`: Errors are FieldError objects with `types` populated
+ *
+ * Use the `isFieldError()` type guard to safely handle both cases:
+ * @example
+ * const error = formState.value.errors.email
+ * if (isFieldError(error)) {
+ *   // Structured error with type, message, and optional types
+ *   console.log(error.type, error.message)
+ * } else if (typeof error === 'string') {
+ *   // Simple string error
+ *   console.log(error)
+ * }
  */
 export type FieldErrorValue = string | FieldError
 
@@ -148,16 +227,17 @@ export interface SetValueOptions {
 
 /**
  * Options for resetField()
+ * @template TValue - The type of the field value (inferred from field path)
  */
-export interface ResetFieldOptions {
+export interface ResetFieldOptions<TValue = unknown> {
   /** Keep validation errors after reset */
   keepError?: boolean
   /** Keep dirty state after reset */
   keepDirty?: boolean
   /** Keep touched state after reset */
   keepTouched?: boolean
-  /** New default value (updates stored default) */
-  defaultValue?: unknown
+  /** New default value (updates stored default) - typed to match field */
+  defaultValue?: TValue
 }
 
 /**
@@ -200,14 +280,27 @@ export interface ResetOptions {
 
 /**
  * Options for registering a field
+ * @template TValue - The type of the field value (inferred from field path)
  */
-export interface RegisterOptions {
+export interface RegisterOptions<TValue = unknown> {
   /** Use controlled mode (v-model) instead of uncontrolled (ref) */
   controlled?: boolean
   /** Disable validation for this field */
   disabled?: boolean
-  /** Custom validation function */
-  validate?: (value: unknown) => string | undefined | Promise<string | undefined>
+  /**
+   * Custom validation function - receives the typed field value.
+   * Return an error message string to indicate validation failure,
+   * or undefined to indicate success.
+   *
+   * @example
+   * register('email', {
+   *   validate: (value) => {
+   *     // value is typed as string (inferred from schema)
+   *     if (!value.includes('@')) return 'Must be a valid email'
+   *   }
+   * })
+   */
+  validate?: (value: TValue) => string | undefined | Promise<string | undefined>
   /** Debounce time in ms for async validation (default: 0 = no debounce) */
   validateDebounce?: number
   /** Remove field data when unmounted (overrides global shouldUnregister option) */
@@ -217,19 +310,38 @@ export interface RegisterOptions {
 }
 
 /**
- * Return value from register() for binding to inputs
+ * Return value from register() for binding to inputs.
+ * Use object spread to bind all properties to your input element.
+ *
+ * @template TValue - The type of the field value (inferred from field path)
+ *
+ * @example
+ * // Uncontrolled (default) - uses ref for DOM access
+ * <input v-bind="register('email')" />
+ *
+ * @example
+ * // Controlled - uses v-model via value ref
+ * const { value, ...rest } = register('email', { controlled: true })
+ * <input v-model="value" v-bind="rest" />
  */
-export interface RegisterReturn {
+export interface RegisterReturn<TValue = unknown> {
   /** Field name for form data */
   name: string
-  /** Ref callback for uncontrolled inputs - accepts HTMLInputElement, HTMLSelectElement, HTMLTextAreaElement, or null */
-  ref: (el: HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement | null | unknown) => void
+  /**
+   * Ref callback for uncontrolled inputs.
+   * Compatible with Vue's template ref system (v-bind spreads this onto elements).
+   * Internally handles HTMLInputElement, HTMLSelectElement, and HTMLTextAreaElement.
+   */
+  ref: (
+    el: HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement | Element | ComponentPublicInstance | null,
+    refs?: Record<string, unknown>,
+  ) => void
   /** Input handler (fires on every keystroke) */
   onInput: (e: Event) => void
   /** Blur handler */
   onBlur: (e: Event) => void
   /** Current value (for controlled mode) - only present when controlled: true */
-  value?: Ref<unknown>
+  value?: Ref<TValue>
 }
 
 /**
@@ -277,27 +389,35 @@ export interface FieldArrayOptions<T = unknown> {
 }
 
 /**
- * API for managing dynamic field arrays
+ * API for managing dynamic field arrays.
+ * All methods that accept values are typed to match the array item type.
+ *
+ * @template TItem - The type of items in the array (inferred from field path)
+ *
+ * @example
+ * interface Address { street: string; city: string }
+ * const addresses = fields('addresses') // FieldArray<Address>
+ * addresses.append({ street: '123 Main', city: 'NYC' }) // Typed!
  */
-export interface FieldArray {
+export interface FieldArray<TItem = unknown> {
   /** Current field items with metadata */
   value: FieldArrayItem[]
   /** Append item(s) to end of array */
-  append: (value: unknown | unknown[], options?: FieldArrayFocusOptions) => void
+  append: (value: TItem | TItem[], options?: FieldArrayFocusOptions) => void
   /** Prepend item(s) to beginning of array */
-  prepend: (value: unknown | unknown[], options?: FieldArrayFocusOptions) => void
+  prepend: (value: TItem | TItem[], options?: FieldArrayFocusOptions) => void
   /** Remove item at index */
   remove: (index: number) => void
   /** Insert item(s) at index */
-  insert: (index: number, value: unknown | unknown[], options?: FieldArrayFocusOptions) => void
+  insert: (index: number, value: TItem | TItem[], options?: FieldArrayFocusOptions) => void
   /** Swap two items */
   swap: (indexA: number, indexB: number) => void
   /** Move item from one index to another */
   move: (from: number, to: number) => void
   /** Update item at index (preserves key/identity) */
-  update: (index: number, value: unknown) => void
+  update: (index: number, value: TItem) => void
   /** Replace all items with new values */
-  replace: (values: unknown[]) => void
+  replace: (values: TItem[]) => void
 }
 
 /**
@@ -345,18 +465,28 @@ export interface UseFormOptions<TSchema extends ZodType> {
 }
 
 /**
- * Return value from useForm composable
+ * Return value from useForm composable.
+ * Provides full type safety with autocomplete for field paths and typed values.
+ *
+ * @template TSchema - The Zod schema type for form validation
  */
 export interface UseFormReturn<TSchema extends ZodType> {
   /**
-   * Register an input field
+   * Register an input field for form management.
+   * Returns props to spread onto your input element.
+   *
    * @param name - Field path (e.g., 'email' or 'user.address.street')
-   * @param options - Registration options
+   * @param options - Registration options (validation, controlled mode, etc.)
+   * @returns Props to bind to the input element
+   *
+   * @example
+   * <input v-bind="register('email')" />
+   * <input v-bind="register('age', { validate: (v) => v >= 0 || 'Must be positive' })" />
    */
   register: <TPath extends Path<InferSchema<TSchema>>>(
     name: TPath,
-    options?: RegisterOptions,
-  ) => RegisterReturn
+    options?: RegisterOptions<PathValue<InferSchema<TSchema>, TPath>>,
+  ) => RegisterReturn<PathValue<InferSchema<TSchema>, TPath>>
 
   /**
    * Unregister a field to clean up refs and options
@@ -383,19 +513,26 @@ export interface UseFormReturn<TSchema extends ZodType> {
   formState: ComputedRef<FormState<InferSchema<TSchema>>>
 
   /**
-   * Manage dynamic field arrays
+   * Manage dynamic field arrays.
+   * Returns a typed API for adding, removing, and reordering array items.
+   *
    * @param name - Array field path
-   * @param options - Optional configuration including rules
+   * @param options - Optional configuration including validation rules
+   * @returns Typed FieldArray API
+   *
+   * @example
+   * const addresses = fields('addresses')
+   * addresses.append({ street: '', city: '' }) // Typed to Address
    */
   fields: <TPath extends Path<InferSchema<TSchema>>>(
     name: TPath,
-    options?: FieldArrayOptions,
-  ) => FieldArray
+    options?: FieldArrayOptions<ArrayElement<PathValue<InferSchema<TSchema>, TPath>>>,
+  ) => FieldArray<ArrayElement<PathValue<InferSchema<TSchema>, TPath>>>
 
   /**
    * Set field value programmatically
    * @param name - Field path
-   * @param value - New value
+   * @param value - New value (typed to match field)
    * @param options - Options for validation/dirty/touched behavior
    */
   setValue: <TPath extends Path<InferSchema<TSchema>>>(
@@ -407,6 +544,7 @@ export interface UseFormReturn<TSchema extends ZodType> {
   /**
    * Get field value
    * @param name - Field path
+   * @returns The field value (typed) or undefined if not set
    */
   getValue: <TPath extends Path<InferSchema<TSchema>>>(
     name: TPath,
@@ -422,11 +560,11 @@ export interface UseFormReturn<TSchema extends ZodType> {
   /**
    * Reset an individual field to its default value
    * @param name - Field path
-   * @param options - Options for what state to preserve
+   * @param options - Options for what state to preserve (with typed defaultValue)
    */
   resetField: <TPath extends Path<InferSchema<TSchema>>>(
     name: TPath,
-    options?: ResetFieldOptions,
+    options?: ResetFieldOptions<PathValue<InferSchema<TSchema>, TPath>>,
   ) => void
 
   /**
@@ -496,4 +634,36 @@ export interface UseFormReturn<TSchema extends ZodType> {
     name: TPath,
     options?: SetFocusOptions
   ) => void
+}
+
+// ============================================================================
+// Type Guards
+// ============================================================================
+
+/**
+ * Type guard to check if an error value is a structured FieldError object.
+ * Use this to safely narrow FieldErrorValue when handling errors.
+ *
+ * @param error - The error value to check (can be string, FieldError, or undefined)
+ * @returns True if the error is a FieldError object with type and message
+ *
+ * @example
+ * const error = formState.value.errors.email
+ * if (isFieldError(error)) {
+ *   // error is FieldError - has .type, .message, and optional .types
+ *   console.log(`${error.type}: ${error.message}`)
+ * } else if (typeof error === 'string') {
+ *   // error is a simple string message
+ *   console.log(error)
+ * }
+ */
+export function isFieldError(error: FieldErrorValue | undefined | null): error is FieldError {
+  return (
+    typeof error === 'object' &&
+    error !== null &&
+    'type' in error &&
+    'message' in error &&
+    typeof error.type === 'string' &&
+    typeof error.message === 'string'
+  )
 }

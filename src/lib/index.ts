@@ -21,24 +21,37 @@ export { useWatch, type UseWatchOptions } from './useWatch'
 export { useController, type UseControllerOptions, type UseControllerReturn, type ControllerFieldProps } from './useController'
 export { useFormState, type UseFormStateOptions, type FormStateKey } from './useFormState'
 
+// Type guard functions
+export { isFieldError } from './types'
+
 export type {
+  // Core form types
   UseFormOptions,
   UseFormReturn,
   RegisterOptions,
   RegisterReturn,
   FormState,
   FieldState,
+  // Error types
   FieldErrors,
   FieldError,
   FieldErrorValue,
+  ErrorOption,
+  // Field array types
   FieldArray,
   FieldArrayItem,
-  ValidationMode,
+  // Utility types for type-safe paths
   InferSchema,
+  FormValues,
+  FormPath,
   Path,
   PathValue,
-  ErrorOption,
+  ArrayElement,
+  ArrayPath,
+  // Configuration types
+  ValidationMode,
   SetFocusOptions,
   ResetOptions,
+  ResetFieldOptions,
   AsyncDefaultValues,
 } from './types'

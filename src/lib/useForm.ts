@@ -528,6 +528,8 @@ export function useForm<TSchema extends ZodType>(
     return await validate(name)
   }
 
+  // Type assertion needed because internal implementations use simpler types
+  // but the public API provides full generic type safety
   return {
     register,
     unregister,
@@ -546,5 +548,5 @@ export function useForm<TSchema extends ZodType>(
     getFieldState,
     trigger,
     setFocus,
-  }
+  } as UseFormReturn<TSchema>
 }
