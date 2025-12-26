@@ -1,16 +1,33 @@
 {
-  "extends": "@vue/tsconfig/tsconfig.dom.json",
-  "include": ["src/lib/**/*"],
-  "exclude": ["src/lib/**/__tests__/*"],
   "compilerOptions": {
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "moduleDetection": "force",
+
+    "target": "ESNext",
+    "useDefineForClassFields": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
+
+    "strict": true,
+    "noImplicitThis": true,
+    "verbatimModuleSyntax": true,
+
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+
     "declaration": true,
     "declarationMap": false,
     "noEmit": false,
     "emitDeclarationOnly": true,
     "outDir": "dist",
     "rootDir": "src/lib",
+
     "paths": {
       "@/*": ["./src/*"]
     }
-  }
+  },
+  "include": ["src/lib/**/*"],
+  "exclude": ["src/lib/**/__tests__/*"]
 }
