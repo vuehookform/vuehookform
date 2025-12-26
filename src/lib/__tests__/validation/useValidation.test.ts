@@ -74,12 +74,8 @@ describe('useValidation', () => {
         await validate()
 
         expect(formState.value.errors.email).toBe('Invalid email format')
-        expect(formState.value.errors.password).toBe(
-          'Password must be at least 8 characters',
-        )
-        expect(formState.value.errors.name).toBe(
-          'Name must be at least 2 characters',
-        )
+        expect(formState.value.errors.password).toBe('Password must be at least 8 characters')
+        expect(formState.value.errors.name).toBe('Name must be at least 2 characters')
       })
 
       it('should clear all errors when form becomes valid', async () => {
@@ -303,12 +299,8 @@ describe('useValidation', () => {
 
       await validate()
 
-      expect(formState.value.errors.email).toBe(
-        'Please enter a valid email address',
-      )
-      expect(formState.value.errors.age).toBe(
-        'You must be at least 18 years old',
-      )
+      expect(formState.value.errors.email).toBe('Please enter a valid email address')
+      expect(formState.value.errors.age).toBe('You must be at least 18 years old')
     })
 
     it('should handle multiple validation rules on same field', async () => {

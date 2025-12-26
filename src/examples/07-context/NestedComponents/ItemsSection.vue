@@ -27,18 +27,11 @@
       </div>
     </div>
 
-    <button
-      type="button"
-      class="btn-add"
-      @click="itemFields.append({ name: '', quantity: 1 })"
-    >
+    <button type="button" class="btn-add" @click="itemFields.append({ name: '', quantity: 1 })">
       + Add Item
     </button>
 
-    <span
-      v-if="formState.errors.items && typeof formState.errors.items === 'string'"
-      class="error"
-    >
+    <span v-if="formState.errors.items && typeof formState.errors.items === 'string'" class="error">
       {{ formState.errors.items }}
     </span>
   </fieldset>

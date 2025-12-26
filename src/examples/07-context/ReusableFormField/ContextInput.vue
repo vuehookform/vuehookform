@@ -28,7 +28,10 @@
       <span v-if="error" class="context-input__error">{{ error }}</span>
       <span
         v-if="maxLength"
-        :class="['context-input__counter', currentLength > maxLength && 'context-input__counter--over']"
+        :class="[
+          'context-input__counter',
+          currentLength > maxLength && 'context-input__counter--over',
+        ]"
       >
         {{ currentLength }}/{{ maxLength }}
       </span>

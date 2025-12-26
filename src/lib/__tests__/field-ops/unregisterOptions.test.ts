@@ -1,11 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { useForm } from '../../useForm'
-import {
-  createMockInput,
-  mountElement,
-  createBlurEvent,
-  schemas,
-} from '../helpers/test-utils'
+import { createMockInput, mountElement, createBlurEvent, schemas } from '../helpers/test-utils'
 
 /**
  * unregister() Options Tests

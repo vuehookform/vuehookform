@@ -37,10 +37,7 @@ export function syncUncontrolledInputs(
  * @param el - The DOM input element to update
  * @param value - The value to set
  */
-export function updateDomElement(
-  el: HTMLInputElement,
-  value: unknown,
-): void {
+export function updateDomElement(el: HTMLInputElement, value: unknown): void {
   if (el.type === 'checkbox') {
     el.checked = value as boolean
   } else {

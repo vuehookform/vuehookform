@@ -68,10 +68,7 @@ export interface UseControllerReturn<TValue> {
  * // <span v-if="fieldState.value.error">{{ fieldState.value.error }}</span>
  * ```
  */
-export function useController<
-  TSchema extends ZodType,
-  TPath extends Path<InferSchema<TSchema>>,
->(
+export function useController<TSchema extends ZodType, TPath extends Path<InferSchema<TSchema>>>(
   options: UseControllerOptions<TSchema, TPath>,
 ): UseControllerReturn<PathValue<InferSchema<TSchema>, TPath>> {
   type TValue = PathValue<InferSchema<TSchema>, TPath>

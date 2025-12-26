@@ -9,10 +9,12 @@ const schema = z.object({
   email: z.string().email(),
   name: z.string().min(2),
   age: z.number().optional(),
-  address: z.object({
-    street: z.string(),
-    city: z.string(),
-  }).optional(),
+  address: z
+    .object({
+      street: z.string(),
+      city: z.string(),
+    })
+    .optional(),
 })
 
 describe('useWatch', () => {

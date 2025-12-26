@@ -18,7 +18,12 @@
 export { useForm } from './useForm'
 export { provideForm, useFormContext, FormContextKey } from './context'
 export { useWatch, type UseWatchOptions } from './useWatch'
-export { useController, type UseControllerOptions, type UseControllerReturn, type ControllerFieldProps } from './useController'
+export {
+  useController,
+  type UseControllerOptions,
+  type UseControllerReturn,
+  type ControllerFieldProps,
+} from './useController'
 export { useFormState, type UseFormStateOptions, type FormStateKey } from './useFormState'
 
 // Type guard functions

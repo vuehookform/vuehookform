@@ -562,9 +562,7 @@ describe('register', () => {
         bioField.ref(mockTextarea as unknown as HTMLInputElement)
 
         mockTextarea.value = 'This is my biography'
-        await bioField.onInput(
-          createInputEvent(mockTextarea as unknown as HTMLInputElement),
-        )
+        await bioField.onInput(createInputEvent(mockTextarea as unknown as HTMLInputElement))
 
         expect(getValues('bio')).toBe('This is my biography')
       })
@@ -586,9 +584,7 @@ describe('register', () => {
         bioField.ref(mockTextarea as unknown as HTMLInputElement)
 
         mockTextarea.value = 'Changed bio'
-        await bioField.onInput(
-          createInputEvent(mockTextarea as unknown as HTMLInputElement),
-        )
+        await bioField.onInput(createInputEvent(mockTextarea as unknown as HTMLInputElement))
 
         expect(formState.value.dirtyFields.bio).toBe(true)
       })
@@ -602,9 +598,7 @@ describe('register', () => {
         countryField.ref(mockSelect as unknown as HTMLInputElement)
 
         mockSelect.value = 'uk'
-        await countryField.onInput(
-          createInputEvent(mockSelect as unknown as HTMLInputElement),
-        )
+        await countryField.onInput(createInputEvent(mockSelect as unknown as HTMLInputElement))
 
         expect(getValues('country')).toBe('uk')
       })
@@ -626,9 +620,7 @@ describe('register', () => {
         countryField.ref(mockSelect as unknown as HTMLInputElement)
 
         mockSelect.value = 'us'
-        await countryField.onInput(
-          createInputEvent(mockSelect as unknown as HTMLInputElement),
-        )
+        await countryField.onInput(createInputEvent(mockSelect as unknown as HTMLInputElement))
 
         expect(formState.value.dirtyFields.country).toBe(true)
       })

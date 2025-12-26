@@ -74,7 +74,9 @@ const stateItems = computed(() => [
 ])
 
 const hasErrors = computed(() => Object.keys(state.value.errors).length > 0)
-const touchedList = computed(() => Object.keys(state.value.touchedFields).filter(k => state.value.touchedFields[k]))
+const touchedList = computed(() =>
+  Object.keys(state.value.touchedFields).filter((k) => state.value.touchedFields[k]),
+)
 </script>
 
 <style scoped>

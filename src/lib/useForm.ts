@@ -315,9 +315,8 @@ export function useForm<TSchema extends ZodType>(
     }
 
     // Update form data (deep clone to prevent reference sharing)
-    const clonedValue = defaultValue !== undefined
-      ? JSON.parse(JSON.stringify(defaultValue))
-      : undefined
+    const clonedValue =
+      defaultValue !== undefined ? JSON.parse(JSON.stringify(defaultValue)) : undefined
     set(ctx.formData, name, clonedValue)
 
     // Conditionally clear errors
@@ -340,7 +339,10 @@ export function useForm<TSchema extends ZodType>(
     if (!fieldOpts?.controlled) {
       const fieldRef = ctx.fieldRefs.get(name)
       if (fieldRef?.value) {
-        updateDomElement(fieldRef.value, clonedValue ?? (fieldRef.value.type === 'checkbox' ? false : ''))
+        updateDomElement(
+          fieldRef.value,
+          clonedValue ?? (fieldRef.value.type === 'checkbox' ? false : ''),
+        )
       }
     }
   }
@@ -352,7 +354,9 @@ export function useForm<TSchema extends ZodType>(
    * @overload Watch multiple fields
    */
   function watch(): ComputedRef<FormValues>
-  function watch<TPath extends Path<FormValues>>(name: TPath): ComputedRef<PathValue<FormValues, TPath>>
+  function watch<TPath extends Path<FormValues>>(
+    name: TPath,
+  ): ComputedRef<PathValue<FormValues, TPath>>
   function watch<TPath extends Path<FormValues>>(names: TPath[]): ComputedRef<Partial<FormValues>>
   function watch<TPath extends Path<FormValues>>(
     name?: TPath | TPath[],
@@ -403,9 +407,7 @@ export function useForm<TSchema extends ZodType>(
     const newErrors = { ...ctx.errors.value }
 
     // Create structured error if type is provided, otherwise use string for backward compatibility
-    const errorValue = error.type
-      ? { type: error.type, message: error.message }
-      : error.message
+    const errorValue = error.type ? { type: error.type, message: error.message } : error.message
 
     set(newErrors, name, errorValue)
     ctx.errors.value = newErrors as FieldErrors<FormValues>
@@ -445,7 +447,10 @@ export function useForm<TSchema extends ZodType>(
    * Get the state of an individual field
    */
   function getFieldState<TPath extends Path<FormValues>>(name: TPath): FieldState {
-    const error = get(ctx.errors.value, name) as string | { type: string; message: string } | undefined
+    const error = get(ctx.errors.value, name) as
+      | string
+      | { type: string; message: string }
+      | undefined
     return {
       isDirty: ctx.dirtyFields.value[name] === true,
       isTouched: ctx.touchedFields.value[name] === true,
@@ -457,9 +462,7 @@ export function useForm<TSchema extends ZodType>(
   /**
    * Manually trigger validation for specific fields or entire form
    */
-  async function trigger<TPath extends Path<FormValues>>(
-    name?: TPath | TPath[],
-  ): Promise<boolean> {
+  async function trigger<TPath extends Path<FormValues>>(name?: TPath | TPath[]): Promise<boolean> {
     if (name === undefined) {
       // Validate entire form
       return await validate()

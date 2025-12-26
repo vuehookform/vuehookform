@@ -4,19 +4,11 @@
 
     <div class="checkbox-group">
       <div class="checkbox-item">
-        <input
-          type="checkbox"
-          id="notif-email"
-          v-bind="register('notifications.email')"
-        />
+        <input type="checkbox" id="notif-email" v-bind="register('notifications.email')" />
         <label for="notif-email">Email notifications</label>
       </div>
       <div class="checkbox-item">
-        <input
-          type="checkbox"
-          id="notif-push"
-          v-bind="register('notifications.push')"
-        />
+        <input type="checkbox" id="notif-push" v-bind="register('notifications.push')" />
         <label for="notif-push">Push notifications</label>
       </div>
     </div>
@@ -31,9 +23,7 @@
     </div>
 
     <!-- Show watched value -->
-    <div class="watch-indicator">
-      Email notifications: {{ emailEnabled ? 'ON' : 'OFF' }}
-    </div>
+    <div class="watch-indicator">Email notifications: {{ emailEnabled ? 'ON' : 'OFF' }}</div>
   </fieldset>
 </template>
 

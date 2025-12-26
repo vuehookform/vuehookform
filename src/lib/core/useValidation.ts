@@ -5,10 +5,7 @@ import { set } from '../utils/paths'
 /**
  * Helper to clear errors for a specific field path and its children
  */
-function clearFieldErrors<T>(
-  errors: FieldErrors<T>,
-  fieldPath: string,
-): FieldErrors<T> {
+function clearFieldErrors<T>(errors: FieldErrors<T>, fieldPath: string): FieldErrors<T> {
   const newErrors = { ...errors }
   for (const key of Object.keys(newErrors)) {
     if (key === fieldPath || key.startsWith(`${fieldPath}.`)) {

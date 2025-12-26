@@ -119,8 +119,7 @@ const checkoutSchema = z
   })
   .superRefine((data, ctx) => {
     const calculatedTotal =
-      data.items.reduce((sum, item) => sum + item.price * item.quantity, 0) -
-      data.discount
+      data.items.reduce((sum, item) => sum + item.price * item.quantity, 0) - data.discount
 
     if (Math.abs(data.total - calculatedTotal) > 0.01) {
       ctx.addIssue({
@@ -130,10 +129,7 @@ const checkoutSchema = z
       })
     }
 
-    const subtotal = data.items.reduce(
-      (sum, item) => sum + item.price * item.quantity,
-      0,
-    )
+    const subtotal = data.items.reduce((sum, item) => sum + item.price * item.quantity, 0)
     if (data.discount > subtotal) {
       ctx.addIssue({
         code: 'custom',
@@ -175,9 +171,7 @@ describe('superRefine validation', () => {
 
       await handleSubmit(vi.fn())(new Event('submit'))
 
-      expect(formState.value.errors.confirmPassword).toBe(
-        'Passwords do not match',
-      )
+      expect(formState.value.errors.confirmPassword).toBe('Passwords do not match')
     })
 
     it('should target error to correct path', async () => {
@@ -207,9 +201,7 @@ describe('superRefine validation', () => {
 
       await handleSubmit(vi.fn())(new Event('submit'))
 
-      expect(formState.value.errors.confirmPassword).toBe(
-        'Passwords do not match',
-      )
+      expect(formState.value.errors.confirmPassword).toBe('Passwords do not match')
     })
 
     it('should clear error when validation passes', async () => {
@@ -254,9 +246,7 @@ describe('superRefine validation', () => {
       // Should have username error (first one wins in firstError mode)
       expect(formState.value.errors.username).toBeDefined()
       // Should have email error for business email with age < 18
-      expect(formState.value.errors.email).toBe(
-        'Business emails require age 18+',
-      )
+      expect(formState.value.errors.email).toBe('Business emails require age 18+')
     })
 
     it('should add errors to different paths in single superRefine', async () => {
@@ -271,12 +261,8 @@ describe('superRefine validation', () => {
 
       await handleSubmit(vi.fn())(new Event('submit'))
 
-      expect(formState.value.errors.username).toBe(
-        'Username must be at least 3 characters',
-      )
-      expect(formState.value.errors.email).toBe(
-        'Business emails require age 18+',
-      )
+      expect(formState.value.errors.username).toBe('Username must be at least 3 characters')
+      expect(formState.value.errors.email).toBe('Business emails require age 18+')
     })
 
     it('should handle errors on same field from multiple addIssue calls', async () => {
@@ -328,9 +314,7 @@ describe('superRefine validation', () => {
 
       await handleSubmit(vi.fn())(new Event('submit'))
 
-      expect(formState.value.errors.startDate).toBe(
-        'Start date must be before end date',
-      )
+      expect(formState.value.errors.startDate).toBe('Start date must be before end date')
     })
 
     it('should validate multiple custom rules in same schema', async () => {
@@ -384,9 +368,7 @@ describe('superRefine validation', () => {
 
       await handleSubmit(vi.fn())(new Event('submit'))
 
-      expect(formState.value.errors.discount).toBe(
-        'Discount cannot exceed subtotal',
-      )
+      expect(formState.value.errors.discount).toBe('Discount cannot exceed subtotal')
     })
 
     it('should validate calculated values against actual values', async () => {
@@ -575,9 +557,7 @@ describe('superRefine validation', () => {
       await handleSubmit(vi.fn())(new Event('submit'))
 
       // First error should be preserved
-      expect(formState.value.errors.username).toBe(
-        'Username must be at least 3 characters',
-      )
+      expect(formState.value.errors.username).toBe('Username must be at least 3 characters')
     })
   })
 
@@ -693,9 +673,7 @@ describe('superRefine validation', () => {
       await trigger()
 
       // confirmPassword should now be invalid (passwords don't match)
-      expect(formState.value.errors.confirmPassword).toBe(
-        'Passwords do not match',
-      )
+      expect(formState.value.errors.confirmPassword).toBe('Passwords do not match')
 
       document.body.removeChild(passwordInput)
     })
@@ -719,9 +697,7 @@ describe('superRefine validation', () => {
       await handleSubmit(vi.fn())(new Event('submit'))
 
       // Should have mismatch error
-      expect(formState.value.errors.confirmPassword).toBe(
-        'Passwords do not match',
-      )
+      expect(formState.value.errors.confirmPassword).toBe('Passwords do not match')
 
       // Update both to match
       setValue('password', 'mismatch')

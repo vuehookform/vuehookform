@@ -186,10 +186,9 @@ describe('controlled inputs', () => {
       })
 
       it('should clear controlled field errors via clearErrors()', async () => {
-        const { register, formState, validate, clearErrors, setValue } =
-          useForm({
-            schema,
-          })
+        const { register, formState, validate, clearErrors, setValue } = useForm({
+          schema,
+        })
 
         const emailField = register('email', { controlled: true })
         emailField.ref(mockInput)
@@ -262,11 +261,10 @@ describe('controlled inputs', () => {
       })
 
       it('should preserve error when keepError: true for controlled field', async () => {
-        const { register, formState, validate, resetField, setValue } =
-          useForm({
-            schema,
-            defaultValues: { email: '', password: '', name: '' },
-          })
+        const { register, formState, validate, resetField, setValue } = useForm({
+          schema,
+          defaultValues: { email: '', password: '', name: '' },
+        })
 
         const emailField = register('email', { controlled: true })
         emailField.ref(mockInput)
@@ -805,9 +803,7 @@ describe('controlled inputs', () => {
           controlled: true,
           validate: async (value) => {
             await new Promise((resolve) => setTimeout(resolve, 10))
-            return value === 'taken@test.com'
-              ? 'Email already taken'
-              : undefined
+            return value === 'taken@test.com' ? 'Email already taken' : undefined
           },
         })
         emailField.ref(mockInput)
@@ -864,15 +860,7 @@ describe('controlled inputs', () => {
         emailField.ref(mockInput)
 
         // Simulate rapid typing using setValue
-        const inputs = [
-          't',
-          'te',
-          'tes',
-          'test',
-          'test@',
-          'test@e',
-          'test@ex.com',
-        ]
+        const inputs = ['t', 'te', 'tes', 'test', 'test@', 'test@e', 'test@ex.com']
 
         for (const input of inputs) {
           setValue('email', input)

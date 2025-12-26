@@ -15,7 +15,7 @@
             :class="[
               activeExampleId === example.id
                 ? 'bg-emerald-500 text-white font-semibold shadow-md'
-                : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+                : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900',
             ]"
             @click="emit('navigate', example.id)"
           >

@@ -1,9 +1,7 @@
 <template>
   <div class="form-fields">
     <div class="field-group">
-      <label for="email" class="label">
-        Email <span class="required">*</span>
-      </label>
+      <label for="email" class="label"> Email <span class="required">*</span> </label>
       <input
         id="email"
         type="email"
@@ -16,9 +14,7 @@
       </span>
     </div>
     <div class="field-group">
-      <label for="message" class="label">
-        Message <span class="required">*</span>
-      </label>
+      <label for="message" class="label"> Message <span class="required">*</span> </label>
       <textarea
         id="message"
         rows="4"

@@ -249,9 +249,7 @@ describe('path utilities', () => {
 
       unset(obj, 'data.items.0.nested.value')
 
-      expect(
-        ((obj.data as Record<string, unknown>).items as unknown[])[0],
-      ).toEqual({
+      expect(((obj.data as Record<string, unknown>).items as unknown[])[0]).toEqual({
         nested: { other: 'keep' },
       })
     })

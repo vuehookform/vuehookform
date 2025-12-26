@@ -3,9 +3,7 @@
     <div class="max-w-6xl mx-auto px-4">
       <div class="flex flex-col sm:flex-row justify-between items-center gap-6">
         <!-- Logo -->
-        <div class="text-white font-bold text-lg">
-          Vue Hook Form
-        </div>
+        <div class="text-white font-bold text-lg">Vue Hook Form</div>
 
         <!-- Links -->
         <div class="flex items-center gap-6">
@@ -34,9 +32,7 @@
         </div>
 
         <!-- Copyright -->
-        <div class="text-white/50 text-sm">
-          MIT License
-        </div>
+        <div class="text-white/50 text-sm">MIT License</div>
       </div>
     </div>
   </footer>

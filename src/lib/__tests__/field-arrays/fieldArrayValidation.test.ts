@@ -118,12 +118,7 @@ describe('field arrays - validation', () => {
       })
 
       // This should be rejected (1 + 4 = 5 > 3)
-      itemsArray.append([
-        { name: 'Two' },
-        { name: 'Three' },
-        { name: 'Four' },
-        { name: 'Five' },
-      ])
+      itemsArray.append([{ name: 'Two' }, { name: 'Three' }, { name: 'Four' }, { name: 'Five' }])
       expect(itemsArray.value.length).toBe(1) // Still 1
       expect(getValues('items')).toHaveLength(1)
     })

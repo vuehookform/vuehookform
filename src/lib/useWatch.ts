@@ -7,7 +7,10 @@ import { get } from './utils/paths'
 /**
  * Options for useWatch composable
  */
-export interface UseWatchOptions<TSchema extends ZodType, TPath extends Path<InferSchema<TSchema>>> {
+export interface UseWatchOptions<
+  TSchema extends ZodType,
+  TPath extends Path<InferSchema<TSchema>>,
+> {
   /** Form control from useForm (uses context if not provided) */
   control?: UseFormReturn<TSchema>
   /** Field path or array of paths to watch (watches all if not provided) */

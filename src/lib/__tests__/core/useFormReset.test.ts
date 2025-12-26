@@ -102,7 +102,10 @@ describe('useForm - reset', () => {
       })
 
       // Reset with new values but keepDefaultValues
-      reset({ email: 'new@test.com', password: 'newpass', name: 'New Name' }, { keepDefaultValues: true })
+      reset(
+        { email: 'new@test.com', password: 'newpass', name: 'New Name' },
+        { keepDefaultValues: true },
+      )
 
       // Values should be the new ones
       expect(getValues('email')).toBe('new@test.com')

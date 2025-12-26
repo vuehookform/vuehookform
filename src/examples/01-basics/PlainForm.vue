@@ -113,9 +113,7 @@
           <span :class="{ active: formState.isDirty }">
             {{ formState.isDirty ? 'Modified' : 'Pristine' }}
           </span>
-          <span v-if="formState.submitCount > 0">
-            Submitted: {{ formState.submitCount }}x
-          </span>
+          <span v-if="formState.submitCount > 0"> Submitted: {{ formState.submitCount }}x </span>
         </div>
       </form>
     </section>
@@ -123,9 +121,7 @@
     <!-- Comparison Section -->
     <section class="comparison-section">
       <h2>Compare with Other Libraries</h2>
-      <p class="comparison-intro">
-        See how the same form looks in different Vue form libraries:
-      </p>
+      <p class="comparison-intro">See how the same form looks in different Vue form libraries:</p>
 
       <!-- Tabs -->
       <div class="tabs">
@@ -241,9 +237,7 @@ const [password, passwordAttrs] = defineField('password')
           <strong>Zod as single source</strong> &mdash; Schema defines both TypeScript types AND
           validation rules
         </li>
-        <li>
-          <strong>Type-safe paths</strong> &mdash; Field names are checked at compile time
-        </li>
+        <li><strong>Type-safe paths</strong> &mdash; Field names are checked at compile time</li>
         <li>
           <strong>Direct control</strong> &mdash; Call setValue, getValue, validate anytime from
           script
@@ -316,12 +310,7 @@ const tabs = [
   max-width: 800px;
   margin: 0 auto;
   padding: 2rem;
-  font-family:
-    -apple-system,
-    BlinkMacSystemFont,
-    'Segoe UI',
-    Roboto,
-    sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
 /* Header */

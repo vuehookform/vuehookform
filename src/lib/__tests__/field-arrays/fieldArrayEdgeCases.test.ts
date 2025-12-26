@@ -182,9 +182,7 @@ describe('field arrays - edge cases', () => {
 
       const usersArray = fields('users')
 
-      expect(() =>
-        usersArray.insert(99, { name: 'Far', email: 'far@test.com' }),
-      ).not.toThrow()
+      expect(() => usersArray.insert(99, { name: 'Far', email: 'far@test.com' })).not.toThrow()
 
       expect(getValues('users')).toBeDefined()
     })
@@ -199,9 +197,7 @@ describe('field arrays - edge cases', () => {
 
       const usersArray = fields('users')
 
-      expect(() =>
-        usersArray.insert(-1, { name: 'Negative', email: 'neg@test.com' }),
-      ).not.toThrow()
+      expect(() => usersArray.insert(-1, { name: 'Negative', email: 'neg@test.com' })).not.toThrow()
     })
 
     it('should insert into empty array at index 0', () => {

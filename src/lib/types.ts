@@ -333,7 +333,13 @@ export interface RegisterReturn<TValue = unknown> {
    * Internally handles HTMLInputElement, HTMLSelectElement, and HTMLTextAreaElement.
    */
   ref: (
-    el: HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement | Element | ComponentPublicInstance | null,
+    el:
+      | HTMLInputElement
+      | HTMLSelectElement
+      | HTMLTextAreaElement
+      | Element
+      | ComponentPublicInstance
+      | null,
     refs?: Record<string, unknown>,
   ) => void
   /** Input handler (fires on every keystroke) */
@@ -583,9 +589,7 @@ export interface UseFormReturn<TSchema extends ZodType> {
    * Clear errors for specified fields or all errors
    * @param name - Optional field path or array of paths
    */
-  clearErrors: <TPath extends Path<InferSchema<TSchema>>>(
-    name?: TPath | TPath[]
-  ) => void
+  clearErrors: <TPath extends Path<InferSchema<TSchema>>>(name?: TPath | TPath[]) => void
 
   /**
    * Set an error for a specific field
@@ -594,7 +598,7 @@ export interface UseFormReturn<TSchema extends ZodType> {
    */
   setError: <TPath extends Path<InferSchema<TSchema>>>(
     name: TPath | 'root' | `root.${string}`,
-    error: ErrorOption
+    error: ErrorOption,
   ) => void
 
   /**
@@ -613,17 +617,13 @@ export interface UseFormReturn<TSchema extends ZodType> {
    * Get the state of an individual field
    * @param name - Field path
    */
-  getFieldState: <TPath extends Path<InferSchema<TSchema>>>(
-    name: TPath
-  ) => FieldState
+  getFieldState: <TPath extends Path<InferSchema<TSchema>>>(name: TPath) => FieldState
 
   /**
    * Manually trigger validation for specific fields or entire form
    * @param name - Optional field path or array of paths
    */
-  trigger: <TPath extends Path<InferSchema<TSchema>>>(
-    name?: TPath | TPath[]
-  ) => Promise<boolean>
+  trigger: <TPath extends Path<InferSchema<TSchema>>>(name?: TPath | TPath[]) => Promise<boolean>
 
   /**
    * Programmatically focus a field
@@ -632,7 +632,7 @@ export interface UseFormReturn<TSchema extends ZodType> {
    */
   setFocus: <TPath extends Path<InferSchema<TSchema>>>(
     name: TPath,
-    options?: SetFocusOptions
+    options?: SetFocusOptions,
   ) => void
 }
 

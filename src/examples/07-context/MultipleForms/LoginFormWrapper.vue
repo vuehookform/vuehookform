@@ -10,11 +10,7 @@
         <span>Submit count: {{ formState.submitCount }}</span>
         <span>{{ formState.isValid ? 'Valid' : 'Invalid' }}</span>
       </div>
-      <button
-        type="submit"
-        class="submit-btn submit-btn--login"
-        :disabled="formState.isSubmitting"
-      >
+      <button type="submit" class="submit-btn submit-btn--login" :disabled="formState.isSubmitting">
         {{ formState.isSubmitting ? 'Signing in...' : 'Sign In' }}
       </button>
     </form>

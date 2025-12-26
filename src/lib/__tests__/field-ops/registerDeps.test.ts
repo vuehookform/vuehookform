@@ -79,7 +79,6 @@ describe('register deps option', () => {
       mode: 'onChange',
     })
 
-
     const inputA = createMockInput()
     const inputB = createMockInput()
     const inputC = createMockInput()

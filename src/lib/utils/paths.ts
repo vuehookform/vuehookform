@@ -42,7 +42,9 @@ export function set(obj: Record<string, unknown>, path: string, value: unknown):
       // Warn when overwriting a primitive with an object structure (dev only)
       // Use try-catch to handle environments where process is not defined
       try {
-        const proc = (globalThis as Record<string, unknown>).process as Record<string, Record<string, string>> | undefined
+        const proc = (globalThis as Record<string, unknown>).process as
+          | Record<string, Record<string, string>>
+          | undefined
         if (proc?.env?.NODE_ENV !== 'production') {
           console.warn(
             `[vue-hook-form] set(): Overwriting primitive value at path "${keys.slice(0, i + 1).join('.')}" with an object. ` +

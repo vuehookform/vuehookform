@@ -42,12 +42,10 @@ describe('integration tests', () => {
       const confirmInput = createAndMountInput()
 
       const onSubmit = vi.fn()
-      const { register, handleSubmit, formState } = useForm(
-        {
-          schema,
-          defaultValues: { email: '', password: '', confirmPassword: '' },
-        },
-      )
+      const { register, handleSubmit, formState } = useForm({
+        schema,
+        defaultValues: { email: '', password: '', confirmPassword: '' },
+      })
 
       // Register fields
       const emailField = register('email')
@@ -330,11 +328,10 @@ describe('integration tests', () => {
       const emailInput = createAndMountInput()
       const passwordInput = createAndMountInput()
 
-      const { register, setError, clearErrors, formState, handleSubmit } =
-        useForm({
-          schema,
-          defaultValues: { email: '', password: '' },
-        })
+      const { register, setError, clearErrors, formState, handleSubmit } = useForm({
+        schema,
+        defaultValues: { email: '', password: '' },
+      })
 
       const emailField = register('email')
       const passwordField = register('password')
@@ -356,9 +353,7 @@ describe('integration tests', () => {
       const submitHandler = handleSubmit(onSubmit)
       await submitHandler(new Event('submit'))
 
-      expect(formState.value.errors.email).toBe(
-        'This email is already registered',
-      )
+      expect(formState.value.errors.email).toBe('This email is already registered')
 
       // Clear the server error
       clearErrors('email')
