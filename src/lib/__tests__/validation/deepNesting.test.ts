@@ -621,7 +621,7 @@ describe('deep nesting validation (3+ levels)', () => {
       setValue('company.department.manager.name', 'Jane')
       await nextTick()
 
-      expect(watchedManager.value.name).toBe('Jane')
+      expect((watchedManager.value as { name: string }).name).toBe('Jane')
     })
   })
 

@@ -12,7 +12,7 @@ const passwordSchema = z
   .superRefine((data, ctx) => {
     if (data.password !== data.confirmPassword) {
       ctx.addIssue({
-        code: z.ZodIssueCode.custom,
+        code: 'custom',
         message: 'Passwords do not match',
         path: ['confirmPassword'],
       })
@@ -30,17 +30,14 @@ const registrationSchema = z
     // Username checks
     if (data.username.length < 3) {
       ctx.addIssue({
-        code: z.ZodIssueCode.too_small,
-        minimum: 3,
-        type: 'string',
-        inclusive: true,
+        code: 'custom',
         message: 'Username must be at least 3 characters',
         path: ['username'],
       })
     }
     if (!/^[a-z0-9]+$/i.test(data.username) && data.username.length > 0) {
       ctx.addIssue({
-        code: z.ZodIssueCode.custom,
+        code: 'custom',
         message: 'Username must be alphanumeric',
         path: ['username'],
       })
@@ -48,7 +45,7 @@ const registrationSchema = z
     // Cross-field validation
     if (data.age < 18 && data.email.includes('business')) {
       ctx.addIssue({
-        code: z.ZodIssueCode.custom,
+        code: 'custom',
         message: 'Business emails require age 18+',
         path: ['email'],
       })
@@ -66,7 +63,7 @@ const orderSchema = z
   .superRefine((data, ctx) => {
     if (data.quantity > data.maxQuantity) {
       ctx.addIssue({
-        code: z.ZodIssueCode.custom,
+        code: 'custom',
         params: { code: 'EXCEEDED_MAX', limit: data.maxQuantity },
         message: `Cannot exceed ${data.maxQuantity} items`,
         path: ['quantity'],
@@ -75,7 +72,7 @@ const orderSchema = z
     if (data.startDate && data.endDate) {
       if (new Date(data.startDate) > new Date(data.endDate)) {
         ctx.addIssue({
-          code: z.ZodIssueCode.custom,
+          code: 'custom',
           params: { code: 'INVALID_DATE_RANGE' },
           message: 'Start date must be before end date',
           path: ['startDate'],
@@ -98,7 +95,7 @@ const profileSchema = z.object({
           data.firstName.length > 0
         ) {
           ctx.addIssue({
-            code: z.ZodIssueCode.custom,
+            code: 'custom',
             message: 'First and last name cannot be the same',
             path: ['lastName'],
           })
@@ -127,7 +124,7 @@ const checkoutSchema = z
 
     if (Math.abs(data.total - calculatedTotal) > 0.01) {
       ctx.addIssue({
-        code: z.ZodIssueCode.custom,
+        code: 'custom',
         message: `Total should be ${calculatedTotal.toFixed(2)}`,
         path: ['total'],
       })
@@ -139,7 +136,7 @@ const checkoutSchema = z
     )
     if (data.discount > subtotal) {
       ctx.addIssue({
-        code: z.ZodIssueCode.custom,
+        code: 'custom',
         message: 'Discount cannot exceed subtotal',
         path: ['discount'],
       })
@@ -529,21 +526,21 @@ describe('superRefine validation', () => {
         .superRefine((data, ctx) => {
           if (data.value.length < 5) {
             ctx.addIssue({
-              code: z.ZodIssueCode.custom,
+              code: 'custom',
               message: 'Must be at least 5 characters',
               path: ['value'],
             })
           }
           if (!data.value.includes('@')) {
             ctx.addIssue({
-              code: z.ZodIssueCode.custom,
+              code: 'custom',
               message: 'Must contain @',
               path: ['value'],
             })
           }
           if (!/\d/.test(data.value)) {
             ctx.addIssue({
-              code: z.ZodIssueCode.custom,
+              code: 'custom',
               message: 'Must contain a number',
               path: ['value'],
             })
@@ -595,7 +592,7 @@ describe('superRefine validation', () => {
           await new Promise((resolve) => setTimeout(resolve, 10))
           if (data.username === 'taken') {
             ctx.addIssue({
-              code: z.ZodIssueCode.custom,
+              code: 'custom',
               message: 'Username is already taken',
               path: ['username'],
             })
@@ -628,7 +625,7 @@ describe('superRefine validation', () => {
           checkOrder.push('check1')
           if (data.field1 === 'invalid') {
             ctx.addIssue({
-              code: z.ZodIssueCode.custom,
+              code: 'custom',
               message: 'Field1 invalid',
               path: ['field1'],
             })
@@ -637,7 +634,7 @@ describe('superRefine validation', () => {
           checkOrder.push('check2')
           if (data.field2 === 'invalid') {
             ctx.addIssue({
-              code: z.ZodIssueCode.custom,
+              code: 'custom',
               message: 'Field2 invalid',
               path: ['field2'],
             })

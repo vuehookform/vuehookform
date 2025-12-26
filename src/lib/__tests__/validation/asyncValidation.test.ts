@@ -1,14 +1,10 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { useForm } from '../../useForm'
 import { z } from 'zod'
-import {
-  createMockInput,
-  createInputEvent,
-  mountElement,
-} from '../helpers/test-utils'
+import { createMockInput, createInputEvent, mountElement } from '../helpers/test-utils'
 
 const schema = z.object({
-  email: z.string().email(),
+  email: z.email(),
   username: z.string().min(3),
 })
 
@@ -60,9 +56,7 @@ describe('async validation edge cases', () => {
       const slowValidator = vi.fn(async () => {
         const currentCall = ++callCount
         // Different delays to simulate race conditions
-        await new Promise((resolve) =>
-          setTimeout(resolve, currentCall === 1 ? 100 : 10),
-        )
+        await new Promise((resolve) => setTimeout(resolve, currentCall === 1 ? 100 : 10))
         validationOrder.push(currentCall)
         return undefined
       })
@@ -316,7 +310,10 @@ describe('async validation edge cases', () => {
       // Note: Transforms are applied during Zod parsing, but this library
       // passes raw form data to onSubmit (not transformed data)
       const transformSchema = z.object({
-        email: z.string().email().transform((val) => val.toLowerCase()),
+        email: z
+          .string()
+          .email()
+          .transform((val) => val.toLowerCase()),
         code: z.string().min(4),
       })
 
