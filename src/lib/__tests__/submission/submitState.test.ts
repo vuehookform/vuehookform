@@ -318,10 +318,10 @@ describe('Submit State', () => {
       setValue('email', 'invalid')
 
       // Track state during second submit
-      let wasResetDuringSubmit = false
+      let _wasResetDuringSubmit = false
       const trackingHandler = async () => {
         // This runs during successful validation
-        wasResetDuringSubmit = true
+        _wasResetDuringSubmit = true
       }
 
       // Second submit (will fail validation)

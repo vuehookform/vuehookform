@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
+import { describe, it } from 'vitest'
 import { useForm } from '../../useForm'
 import { z } from 'zod'
 import {
@@ -33,7 +33,7 @@ const passwordConfirmSchema = z
 
 describe('register deps option', () => {
   it('should trigger dependent field validation on input', async () => {
-    const { register, formState, setValue } = useForm({
+    const { register, setValue } = useForm({
       schema: passwordConfirmSchema,
       defaultValues: { password: '', confirmPassword: '' },
       mode: 'onChange',
@@ -73,13 +73,12 @@ describe('register deps option', () => {
       c: z.string().min(1),
     })
 
-    const { register, trigger } = useForm({
+    const { register } = useForm({
       schema: threeFieldSchema,
       defaultValues: { a: '', b: '', c: '' },
       mode: 'onChange',
     })
 
-    const triggerSpy = vi.fn()
 
     const inputA = createMockInput()
     const inputB = createMockInput()
@@ -108,7 +107,7 @@ describe('register deps option', () => {
   })
 
   it('should trigger deps validation on blur', async () => {
-    const { register, formState } = useForm({
+    const { register } = useForm({
       schema: passwordConfirmSchema,
       defaultValues: { password: '', confirmPassword: '' },
       mode: 'onBlur',
@@ -132,7 +131,7 @@ describe('register deps option', () => {
   })
 
   it('should respect validation mode for deps', async () => {
-    const { register, formState, setValue } = useForm({
+    const { register } = useForm({
       schema: passwordConfirmSchema,
       defaultValues: { password: '', confirmPassword: '' },
       mode: 'onBlur', // Only validate on blur
@@ -167,7 +166,7 @@ describe('register deps option', () => {
       }),
     })
 
-    const { register, setValue } = useForm({
+    const { register } = useForm({
       schema: nestedDepsSchema,
       defaultValues: {
         user: { email: '', confirmEmail: '' },
@@ -195,7 +194,7 @@ describe('register deps option', () => {
   })
 
   it('should handle empty deps array', async () => {
-    const { register, setValue } = useForm({
+    const { register } = useForm({
       schema: schemas.basic,
       defaultValues: { email: '', password: '', name: '' },
       mode: 'onChange',

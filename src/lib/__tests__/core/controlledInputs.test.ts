@@ -777,7 +777,7 @@ describe('controlled inputs', () => {
     describe('custom validate function', () => {
       it('should run custom validation on controlled field', async () => {
         const customValidator = vi.fn().mockReturnValue(undefined)
-        const { register, formState } = useForm({
+        const { register } = useForm({
           schema,
           mode: 'onChange',
         })
@@ -855,7 +855,7 @@ describe('controlled inputs', () => {
 
     describe('rapid value changes', () => {
       it('should handle rapid controlled value changes', async () => {
-        const { register, getValues, formState, setValue } = useForm({
+        const { register, getValues, setValue } = useForm({
           schema,
           mode: 'onChange',
         })

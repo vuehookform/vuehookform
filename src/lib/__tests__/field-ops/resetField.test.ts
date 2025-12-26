@@ -57,7 +57,7 @@ describe('resetField', () => {
   })
 
   it('should preserve error when keepError: true', async () => {
-    const { register, formState, resetField, trigger } = useForm({
+    const { register, trigger } = useForm({
       schema: schemas.basic,
       defaultValues: { email: 'valid@test.com', password: '', name: '' },
     })
@@ -160,7 +160,7 @@ describe('resetField', () => {
   })
 
   it('should reset nested field correctly', () => {
-    const { setValue, resetField, getValue, getValues } = useForm({
+    const { setValue, resetField, getValue } = useForm({
       schema: nestedSchema,
       defaultValues: {
         user: {

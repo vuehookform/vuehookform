@@ -255,7 +255,7 @@ describe('discriminated union validation', () => {
     })
 
     it('should handle rapid discriminator switching', async () => {
-      const { setValue, getValues, handleSubmit, formState } = useForm({
+      const { setValue, getValues, handleSubmit } = useForm({
         schema: paymentSchema,
         defaultValues: {
           payment: {
@@ -466,7 +466,7 @@ describe('discriminated union validation', () => {
     })
 
     it('should handle append/remove with discriminated items', async () => {
-      const { fields, handleSubmit, formState, getValues } = useForm({
+      const { fields, handleSubmit, formState } = useForm({
         schema: itemsSchema,
         defaultValues: {
           items: [{ category: 'product', name: 'Widget', price: 10 }],
@@ -495,7 +495,7 @@ describe('discriminated union validation', () => {
     })
 
     it('should update individual item discriminator', async () => {
-      const { setValue, getValues, handleSubmit, formState } = useForm({
+      const { setValue, getValues, handleSubmit } = useForm({
         schema: itemsSchema,
         defaultValues: {
           items: [{ category: 'product', name: 'Widget', price: 10 }],

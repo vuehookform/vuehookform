@@ -152,12 +152,6 @@ function createInputEvent(element: HTMLInputElement): Event {
   return event
 }
 
-function createBlurEvent(element: HTMLInputElement): Event {
-  const event = new Event('blur', { bubbles: true })
-  Object.defineProperty(event, 'target', { value: element, writable: false })
-  return event
-}
-
 describe('superRefine validation', () => {
   let mockInput: HTMLInputElement
 
@@ -417,7 +411,7 @@ describe('superRefine validation', () => {
     })
 
     it('should handle array data in superRefine', async () => {
-      const { handleSubmit, formState } = useForm({
+      const { handleSubmit } = useForm({
         schema: checkoutSchema,
         defaultValues: {
           items: [
