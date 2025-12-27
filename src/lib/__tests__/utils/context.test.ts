@@ -87,7 +87,6 @@ describe('Form Context API', () => {
       expect(form.handleSubmit).toBeDefined()
       expect(form.formState).toBeDefined()
       expect(form.setValue).toBeDefined()
-      expect(form.getValue).toBeDefined()
       expect(form.getValues).toBeDefined()
       expect(form.watch).toBeDefined()
       expect(form.reset).toBeDefined()

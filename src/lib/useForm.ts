@@ -5,6 +5,7 @@ import type {
   UseFormReturn,
   FormState,
   FieldErrors,
+  FieldErrorValue,
   FieldState,
   ErrorOption,
   SetFocusOptions,
@@ -14,8 +15,10 @@ import type {
   InferSchema,
   Path,
   PathValue,
+  SetErrorsOptions,
 } from './types'
 import { get, set } from './utils/paths'
+import { __DEV__, validatePathSyntax, warnInvalidPath } from './utils/devWarnings'
 import { createFormContext } from './core/formContext'
 import { createValidation } from './core/useValidation'
 import { createFieldRegistration } from './core/useFieldRegistration'
@@ -183,6 +186,14 @@ export function useForm<TSchema extends ZodType>(
     value: PathValue<FormValues, TPath>,
     setValueOptions?: SetValueOptions,
   ): void {
+    // Dev-mode path validation
+    if (__DEV__) {
+      const syntaxError = validatePathSyntax(name)
+      if (syntaxError) {
+        warnInvalidPath('setValue', name, syntaxError)
+      }
+    }
+
     set(ctx.formData, name, value)
 
     // shouldDirty (default: true)
@@ -209,15 +220,6 @@ export function useForm<TSchema extends ZodType>(
     if (setValueOptions?.shouldValidate) {
       validate(name)
     }
-  }
-
-  /**
-   * Get field value
-   */
-  function getValue<TPath extends Path<FormValues>>(
-    name: TPath,
-  ): PathValue<FormValues, TPath> | undefined {
-    return get(ctx.formData, name) as PathValue<FormValues, TPath> | undefined
   }
 
   /**
@@ -416,6 +418,81 @@ export function useForm<TSchema extends ZodType>(
   }
 
   /**
+   * Set multiple errors at once
+   */
+  function setErrors<TPath extends Path<FormValues>>(
+    errors: Partial<Record<TPath | 'root' | `root.${string}`, string | ErrorOption>>,
+    options?: SetErrorsOptions,
+  ): void {
+    // Start with empty object if replacing, otherwise preserve existing
+    const newErrors = options?.shouldReplace ? {} : { ...ctx.errors.value }
+
+    // Iterate over provided errors and apply them
+    for (const [name, error] of Object.entries(errors)) {
+      if (error === undefined) continue
+
+      // Handle both string and ErrorOption formats
+      const errorValue =
+        typeof error === 'string'
+          ? error
+          : (error as ErrorOption).type
+            ? { type: (error as ErrorOption).type, message: (error as ErrorOption).message }
+            : (error as ErrorOption).message
+
+      set(newErrors, name, errorValue)
+    }
+
+    ctx.errors.value = newErrors as FieldErrors<FormValues>
+  }
+
+  /**
+   * Check if form or specific field has errors
+   */
+  function hasErrors<TPath extends Path<FormValues>>(
+    fieldPath?: TPath | 'root' | `root.${string}`,
+  ): boolean {
+    // Get merged errors (internal + external)
+    const mergedErrors = {
+      ...ctx.errors.value,
+      ...ctx.externalErrors.value,
+    }
+
+    if (fieldPath === undefined) {
+      // Check if form has any errors
+      return Object.keys(mergedErrors).length > 0
+    }
+
+    // Check specific field - use get() for nested path support
+    const error = get(mergedErrors, fieldPath)
+    return error !== undefined && error !== null
+  }
+
+  /**
+   * Get errors for form or specific field
+   */
+  function getErrors(): FieldErrors<FormValues>
+  function getErrors<TPath extends Path<FormValues>>(
+    fieldPath: TPath | 'root' | `root.${string}`,
+  ): FieldErrorValue | undefined
+  function getErrors<TPath extends Path<FormValues>>(
+    fieldPath?: TPath | 'root' | `root.${string}`,
+  ): FieldErrors<FormValues> | FieldErrorValue | undefined {
+    // Get merged errors (internal + external)
+    const mergedErrors = {
+      ...ctx.errors.value,
+      ...ctx.externalErrors.value,
+    } as FieldErrors<FormValues>
+
+    if (fieldPath === undefined) {
+      // Return all errors
+      return mergedErrors
+    }
+
+    // Return specific field error
+    return get(mergedErrors, fieldPath) as FieldErrorValue | undefined
+  }
+
+  /**
    * Get form values - all values, single field, or multiple fields
    */
   function getValues(): FormValues
@@ -495,13 +572,15 @@ export function useForm<TSchema extends ZodType>(
     formState,
     fields,
     setValue,
-    getValue,
     reset,
     resetField,
     watch,
     validate,
     clearErrors,
     setError,
+    setErrors,
+    hasErrors,
+    getErrors,
     getValues,
     getFieldState,
     trigger,

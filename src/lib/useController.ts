@@ -82,14 +82,14 @@ export function useController<TSchema extends ZodType, TPath extends Path<InferS
   const elementRef = ref<HTMLElement | null>(null)
 
   // Initialize with default value if provided
-  if (defaultValue !== undefined && form.getValue(name) === undefined) {
+  if (defaultValue !== undefined && form.getValues(name) === undefined) {
     form.setValue(name, defaultValue)
   }
 
   // Create reactive value
   const value = computed({
     get: () => {
-      const currentValue = form.getValue(name)
+      const currentValue = form.getValues(name)
       return (currentValue ?? defaultValue) as TValue
     },
     set: (newValue: TValue) => {

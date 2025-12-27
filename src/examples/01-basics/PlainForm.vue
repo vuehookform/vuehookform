@@ -239,7 +239,7 @@ const [password, passwordAttrs] = defineField('password')
         </li>
         <li><strong>Type-safe paths</strong> &mdash; Field names are checked at compile time</li>
         <li>
-          <strong>Direct control</strong> &mdash; Call setValue, getValue, validate anytime from
+          <strong>Direct control</strong> &mdash; Call setValue, getValues, validate anytime from
           script
         </li>
       </ul>

@@ -8,6 +8,13 @@ import type {
   Path,
 } from '../types'
 import { get, set, unset } from '../utils/paths'
+import {
+  __DEV__,
+  validatePathSyntax,
+  validatePathAgainstSchema,
+  warnInvalidPath,
+  warnPathNotInSchema,
+} from '../utils/devWarnings'
 
 // Monotonic counter for validation request IDs (avoids race conditions)
 let validationRequestCounter = 0
@@ -26,6 +33,21 @@ export function createFieldRegistration<FormValues>(
     name: TPath,
     registerOptions?: RegisterOptions,
   ): RegisterReturn {
+    // Dev-mode path validation (tree-shaken in production)
+    if (__DEV__) {
+      // Check for syntax errors in the path
+      const syntaxError = validatePathSyntax(name)
+      if (syntaxError) {
+        warnInvalidPath('register', name, syntaxError)
+      }
+
+      // Validate path exists in schema
+      const schemaResult = validatePathAgainstSchema(ctx.options.schema, name)
+      if (!schemaResult.valid) {
+        warnPathNotInSchema('register', name, schemaResult.availableFields)
+      }
+    }
+
     // Check if already registered - reuse existing ref to prevent recreation on every render
     let fieldRef = ctx.fieldRefs.get(name)
 

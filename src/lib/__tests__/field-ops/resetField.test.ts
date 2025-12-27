@@ -39,16 +39,16 @@ describe('resetField', () => {
   })
 
   it('should reset field to its default value', () => {
-    const { setValue, resetField, getValue } = useForm({
+    const { setValue, resetField, getValues } = useForm({
       schema: schemas.basic,
       defaultValues: { email: 'default@test.com', password: '', name: '' },
     })
 
     setValue('email', 'changed@test.com')
-    expect(getValue('email')).toBe('changed@test.com')
+    expect(getValues('email')).toBe('changed@test.com')
 
     resetField('email')
-    expect(getValue('email')).toBe('default@test.com')
+    expect(getValues('email')).toBe('default@test.com')
   })
 
   it('should preserve error when keepError: true', async () => {
@@ -140,22 +140,22 @@ describe('resetField', () => {
   })
 
   it('should update stored default when defaultValue provided', () => {
-    const { resetField, reset, getValue } = useForm({
+    const { resetField, reset, getValues } = useForm({
       schema: schemas.basic,
       defaultValues: { email: 'original@test.com', password: '', name: '' },
     })
 
     // Reset field with new default
     resetField('email', { defaultValue: 'new-default@test.com' })
-    expect(getValue('email')).toBe('new-default@test.com')
+    expect(getValues('email')).toBe('new-default@test.com')
 
     // Full form reset should use the new default
     reset()
-    expect(getValue('email')).toBe('new-default@test.com')
+    expect(getValues('email')).toBe('new-default@test.com')
   })
 
   it('should reset nested field correctly', () => {
-    const { setValue, resetField, getValue } = useForm({
+    const { setValue, resetField, getValues } = useForm({
       schema: nestedSchema,
       defaultValues: {
         user: {
@@ -166,14 +166,14 @@ describe('resetField', () => {
     })
 
     // Verify initial state
-    expect(getValue('user.email')).toBe('default@test.com')
+    expect(getValues('user.email')).toBe('default@test.com')
 
     setValue('user.email', 'changed@test.com')
-    expect(getValue('user.email')).toBe('changed@test.com')
+    expect(getValues('user.email')).toBe('changed@test.com')
 
     // Reset with explicit default value (since nested paths may not auto-resolve from defaults)
     resetField('user.email', { defaultValue: 'default@test.com' })
-    expect(getValue('user.email')).toBe('default@test.com')
+    expect(getValues('user.email')).toBe('default@test.com')
   })
 
   it('should update DOM element value for uncontrolled inputs', () => {

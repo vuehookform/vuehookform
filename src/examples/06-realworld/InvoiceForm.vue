@@ -220,7 +220,7 @@ const form = useForm({
   mode: 'onSubmit',
 })
 
-const { register, handleSubmit, formState, fields, watch, getValue } = form
+const { register, handleSubmit, formState, fields, watch, getValues } = form
 
 interface InvoiceItem {
   description: string
@@ -280,7 +280,7 @@ function addItem() {
 
 function previewInvoice() {
   alert(
-    `Invoice Preview:\nClient: ${getValue('client.name')}\nTotal: $${formatNumber(grandTotal.value)}`,
+    `Invoice Preview:\nClient: ${getValues('client.name')}\nTotal: $${formatNumber(grandTotal.value)}`,
   )
 }
 

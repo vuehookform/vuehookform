@@ -262,7 +262,7 @@ describe('useForm - values', () => {
     })
 
     it('should update silently with all options false', () => {
-      const { setValue, getValue, formState } = useForm({
+      const { setValue, getValues, formState } = useForm({
         schema,
         defaultValues: { email: '', password: '', name: '' },
       })
@@ -274,7 +274,7 @@ describe('useForm - values', () => {
       })
 
       // Value should be updated
-      expect(getValue('email')).toBe('silent@test.com')
+      expect(getValues('email')).toBe('silent@test.com')
       // But no state changes
       expect(formState.value.dirtyFields.email).toBeUndefined()
       expect(formState.value.touchedFields.email).toBeUndefined()

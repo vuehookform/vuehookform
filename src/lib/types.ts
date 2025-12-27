@@ -76,8 +76,20 @@ export type ArrayPath<T> = {
 }[Path<T>]
 
 /**
+ * Get non-array field paths (primitive fields and nested objects, excluding arrays).
+ * Useful for methods like register() that work with individual fields.
+ *
+ * @example
+ * type Form = { name: string; addresses: Address[] }
+ * type Fields = FieldPath<Form>  // 'name' (excludes 'addresses')
+ */
+export type FieldPath<T> = {
+  [K in Path<T>]: PathValue<T, K> extends Array<unknown> ? never : K
+}[Path<T>]
+
+/**
  * Extract the value type at a given dot-notation path.
- * Used internally to ensure setValue/getValue have correct types.
+ * Used internally to ensure setValue/getValues have correct types.
  * Supports numeric string indices for array access (e.g., 'items.0.name').
  *
  * @example
@@ -281,6 +293,14 @@ export interface ResetOptions {
 }
 
 /**
+ * Options for setErrors() bulk operation
+ */
+export interface SetErrorsOptions {
+  /** Replace all existing errors instead of merging (default: false) */
+  shouldReplace?: boolean
+}
+
+/**
  * Options for registering a field
  * @template TValue - The type of the field value (inferred from field path)
  */
@@ -416,6 +436,16 @@ export interface FieldArray<TItem = unknown> {
   prepend: (value: TItem | TItem[], options?: FieldArrayFocusOptions) => void
   /** Remove item at index */
   remove: (index: number) => void
+  /**
+   * Remove all items from the array
+   * Respects minLength rule - will not remove if it would violate minimum
+   */
+  removeAll: () => void
+  /**
+   * Remove multiple items by indices (handles any order, removes from highest to lowest)
+   * @param indices - Array of indices to remove
+   */
+  removeMany: (indices: number[]) => void
   /** Insert item(s) at index */
   insert: (index: number, value: TItem | TItem[], options?: FieldArrayFocusOptions) => void
   /** Swap two items */
@@ -524,7 +554,7 @@ export interface UseFormReturn<TSchema extends ZodType> {
    * Manage dynamic field arrays.
    * Returns a typed API for adding, removing, and reordering array items.
    *
-   * @param name - Array field path
+   * @param name - Array field path (must be an array field in the schema)
    * @param options - Optional configuration including validation rules
    * @returns Typed FieldArray API
    *
@@ -532,7 +562,7 @@ export interface UseFormReturn<TSchema extends ZodType> {
    * const addresses = fields('addresses')
    * addresses.append({ street: '', city: '' }) // Typed to Address
    */
-  fields: <TPath extends Path<InferSchema<TSchema>>>(
+  fields: <TPath extends ArrayPath<InferSchema<TSchema>>>(
     name: TPath,
     options?: FieldArrayOptions<ArrayElement<PathValue<InferSchema<TSchema>, TPath>>>,
   ) => FieldArray<ArrayElement<PathValue<InferSchema<TSchema>, TPath>>>
@@ -548,15 +578,6 @@ export interface UseFormReturn<TSchema extends ZodType> {
     value: PathValue<InferSchema<TSchema>, TPath>,
     options?: SetValueOptions,
   ) => void
-
-  /**
-   * Get field value
-   * @param name - Field path
-   * @returns The field value (typed) or undefined if not set
-   */
-  getValue: <TPath extends Path<InferSchema<TSchema>>>(
-    name: TPath,
-  ) => PathValue<InferSchema<TSchema>, TPath> | undefined
 
   /**
    * Reset form to default values
@@ -610,6 +631,68 @@ export interface UseFormReturn<TSchema extends ZodType> {
     name: TPath | 'root' | `root.${string}`,
     error: ErrorOption,
   ) => void
+
+  /**
+   * Set multiple errors at once. Useful for server-side validation errors
+   * or bulk error handling scenarios.
+   *
+   * @param errors - Record of field paths to error messages or ErrorOption objects
+   * @param options - Optional configuration for merge behavior
+   *
+   * @example
+   * // Simple string errors
+   * setErrors({
+   *   email: 'Email already exists',
+   *   'user.name': 'Name is too short'
+   * })
+   *
+   * @example
+   * // Replace all errors
+   * setErrors({ email: 'New error' }, { shouldReplace: true })
+   */
+  setErrors: <TPath extends Path<InferSchema<TSchema>>>(
+    errors: Partial<Record<TPath | 'root' | `root.${string}`, string | ErrorOption>>,
+    options?: SetErrorsOptions,
+  ) => void
+
+  /**
+   * Check if the form or a specific field has validation errors
+   *
+   * @param fieldPath - Optional field path to check. If omitted, checks entire form.
+   * @returns true if errors exist, false otherwise
+   *
+   * @example
+   * if (hasErrors()) {
+   *   console.log('Form has validation errors')
+   * }
+   *
+   * @example
+   * if (hasErrors('email')) {
+   *   focusField('email')
+   * }
+   */
+  hasErrors: <TPath extends Path<InferSchema<TSchema>>>(
+    fieldPath?: TPath | 'root' | `root.${string}`,
+  ) => boolean
+
+  /**
+   * Get validation errors for the form or a specific field
+   *
+   * @overload Get all form errors
+   * @overload Get error for a specific field
+   *
+   * @example
+   * const allErrors = getErrors()
+   *
+   * @example
+   * const emailError = getErrors('email')
+   */
+  getErrors: {
+    (): FieldErrors<InferSchema<TSchema>>
+    <TPath extends Path<InferSchema<TSchema>>>(
+      fieldPath: TPath | 'root' | `root.${string}`,
+    ): FieldErrorValue | undefined
+  }
 
   /**
    * Get all form values, a single value, or multiple values

@@ -29,7 +29,7 @@ describe('unregister options', () => {
   })
 
   it('should clear value, error, dirty, touched by default', async () => {
-    const { register, unregister, setValue, trigger, formState, getValue } = useForm({
+    const { register, unregister, setValue, trigger, formState, getValues } = useForm({
       schema: schemas.basic,
       defaultValues: { email: '', password: '', name: '' },
     })
@@ -42,20 +42,20 @@ describe('unregister options', () => {
     await emailField.onBlur(createBlurEvent(mockInput))
     await trigger('email')
 
-    expect(getValue('email')).toBe('test@test.com')
+    expect(getValues('email')).toBe('test@test.com')
     expect(formState.value.dirtyFields.email).toBe(true)
     expect(formState.value.touchedFields.email).toBe(true)
 
     // Unregister with defaults
     unregister('email')
 
-    expect(getValue('email')).toBeUndefined()
+    expect(getValues('email')).toBeUndefined()
     expect(formState.value.dirtyFields.email).toBeUndefined()
     expect(formState.value.touchedFields.email).toBeUndefined()
   })
 
   it('should preserve value when keepValue: true', () => {
-    const { register, unregister, setValue, getValue } = useForm({
+    const { register, unregister, setValue, getValues } = useForm({
       schema: schemas.basic,
       defaultValues: { email: '', password: '', name: '' },
     })
@@ -65,7 +65,7 @@ describe('unregister options', () => {
 
     unregister('email', { keepValue: true })
 
-    expect(getValue('email')).toBe('keep-me@test.com')
+    expect(getValues('email')).toBe('keep-me@test.com')
   })
 
   it('should preserve error when keepError: true', async () => {
@@ -119,7 +119,7 @@ describe('unregister options', () => {
   })
 
   it('should handle multiple keep options', async () => {
-    const { register, unregister, setValue, trigger, formState, getValue } = useForm({
+    const { register, unregister, setValue, trigger, formState, getValues } = useForm({
       schema: schemas.basic,
       defaultValues: { email: '', password: '', name: '' },
     })
@@ -140,7 +140,7 @@ describe('unregister options', () => {
       keepTouched: true,
     })
 
-    expect(getValue('email')).toBe('invalid')
+    expect(getValues('email')).toBe('invalid')
     expect(formState.value.errors.email).toBeDefined()
     expect(formState.value.dirtyFields.email).toBe(true)
     expect(formState.value.touchedFields.email).toBe(true)

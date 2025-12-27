@@ -137,7 +137,7 @@ describe('useController', () => {
       field.onChange('new@example.com')
 
       expect(field.value.value).toBe('new@example.com')
-      expect(form.getValue('email')).toBe('new@example.com')
+      expect(form.getValues('email')).toBe('new@example.com')
     })
 
     it('should initialize with default value when field is undefined', () => {
@@ -165,7 +165,7 @@ describe('useController', () => {
 
       // Change via controller
       field.value.value = 'changed@example.com'
-      expect(form.getValue('email')).toBe('changed@example.com')
+      expect(form.getValues('email')).toBe('changed@example.com')
 
       // Change via form
       form.setValue('email', 'another@example.com')

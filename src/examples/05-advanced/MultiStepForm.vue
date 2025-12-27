@@ -98,7 +98,7 @@
               <h4>Account</h4>
               <div class="review-item">
                 <span class="review-label">Email:</span>
-                <span class="review-value">{{ getValue('email') }}</span>
+                <span class="review-value">{{ getValues('email') }}</span>
               </div>
             </div>
 
@@ -107,12 +107,12 @@
               <div class="review-item">
                 <span class="review-label">Name:</span>
                 <span class="review-value"
-                  >{{ getValue('firstName') }} {{ getValue('lastName') }}</span
+                  >{{ getValues('firstName') }} {{ getValues('lastName') }}</span
                 >
               </div>
               <div class="review-item">
                 <span class="review-label">Phone:</span>
-                <span class="review-value">{{ getValue('phone') || 'Not provided' }}</span>
+                <span class="review-value">{{ getValues('phone') || 'Not provided' }}</span>
               </div>
             </div>
 
@@ -120,11 +120,11 @@
               <h4>Preferences</h4>
               <div class="review-item">
                 <span class="review-label">Newsletter:</span>
-                <span class="review-value">{{ getValue('newsletter') ? 'Yes' : 'No' }}</span>
+                <span class="review-value">{{ getValues('newsletter') ? 'Yes' : 'No' }}</span>
               </div>
               <div class="review-item">
                 <span class="review-label">Terms Accepted:</span>
-                <span class="review-value">{{ getValue('terms') ? 'Yes' : 'No' }}</span>
+                <span class="review-value">{{ getValues('terms') ? 'Yes' : 'No' }}</span>
               </div>
             </div>
           </div>
@@ -228,7 +228,7 @@ const form = useForm({
   mode: 'onSubmit', // Validate on step navigation instead
 })
 
-const { register, handleSubmit, formState, validate, getValue } = form
+const { register, handleSubmit, formState, validate, getValues } = form
 
 type WizardFieldPath = keyof z.infer<typeof schema>
 
@@ -304,15 +304,15 @@ async function nextStep() {
   {
     title: 'Review Step',
     language: 'vue' as const,
-    code: `<!-- Use getValue to display entered data -->
+    code: `<!-- Use getValues to display entered data -->
 <div class="review-section">
   <h4>Account</h4>
-  <span>Email: {{ getValue('email') }}</span>
+  <span>Email: {{ getValues('email') }}</span>
 </div>
 
 <div class="review-section">
   <h4>Profile</h4>
-  <span>Name: {{ getValue('firstName') }} {{ getValue('lastName') }}</span>
+  <span>Name: {{ getValues('firstName') }} {{ getValues('lastName') }}</span>
 </div>`,
   },
   {

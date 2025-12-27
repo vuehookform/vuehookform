@@ -15,7 +15,7 @@ const props = defineProps<{
 provide('formRegister', props.form.register)
 provide('formState', props.form.formState)
 provide('formSetValue', props.form.setValue)
-provide('formGetValue', props.form.getValue)
+provide('formGetValues', props.form.getValues)
 provide('formWatch', props.form.watch)
 provide('formValidate', props.form.validate)
 provide('formReset', props.form.reset)

@@ -447,7 +447,7 @@ describe('deep nesting validation (3+ levels)', () => {
     })
   })
 
-  describe('setValue/getValue on deep paths', () => {
+  describe('setValue/getValues on deep paths', () => {
     it('should setValue at 3-level path', async () => {
       const { setValue, getValues } = useForm({
         schema: threeLevelSchema,

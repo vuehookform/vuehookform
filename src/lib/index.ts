@@ -42,6 +42,7 @@ export type {
   FieldError,
   FieldErrorValue,
   ErrorOption,
+  SetErrorsOptions,
   // Field array types
   FieldArray,
   FieldArrayItem,
@@ -53,6 +54,7 @@ export type {
   PathValue,
   ArrayElement,
   ArrayPath,
+  FieldPath,
   // Configuration types
   ValidationMode,
   SetFocusOptions,

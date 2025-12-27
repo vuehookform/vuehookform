@@ -107,7 +107,7 @@ const {
   formState, // Reactive form state (errors, isSubmitting, etc.)
   fields, // Manage dynamic field arrays
   setValue, // Programmatically set field value
-  getValue, // Get current field value
+  getValues, // Get field value(s) - single, multiple, or all
   reset, // Reset form to default values
   watch, // Watch field value changes
   validate, // Manually trigger validation

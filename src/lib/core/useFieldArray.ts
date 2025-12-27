@@ -8,6 +8,17 @@ import type {
   Path,
 } from '../types'
 import { get, set, generateId } from '../utils/paths'
+import {
+  __DEV__,
+  validatePathSyntax,
+  validatePathAgainstSchema,
+  isArrayFieldInSchema,
+  warnInvalidPath,
+  warnPathNotInSchema,
+  warnFieldsOnNonArray,
+  warnArrayOperationRejected,
+  warnArrayIndexOutOfBounds,
+} from '../utils/devWarnings'
 
 /**
  * Create field array management functions
@@ -26,6 +37,27 @@ export function createFieldArrayManager<FormValues>(
     name: TPath,
     options?: FieldArrayOptions,
   ): FieldArray {
+    // Dev-mode path validation (tree-shaken in production)
+    if (__DEV__) {
+      // Check for syntax errors in the path
+      const syntaxError = validatePathSyntax(name)
+      if (syntaxError) {
+        warnInvalidPath('fields', name, syntaxError)
+      }
+
+      // Validate path exists in schema
+      const schemaResult = validatePathAgainstSchema(ctx.options.schema, name)
+      if (!schemaResult.valid) {
+        warnPathNotInSchema('fields', name, schemaResult.availableFields)
+      }
+
+      // Warn if path is not an array field
+      const isArray = isArrayFieldInSchema(ctx.options.schema, name)
+      if (isArray === false) {
+        warnFieldsOnNonArray(name)
+      }
+    }
+
     // Get or create field array entry
     let fieldArray = ctx.fieldArrays.get(name)
 
@@ -134,6 +166,12 @@ export function createFieldArrayManager<FormValues>(
       // P2: Check maxLength rule before adding
       const rules = fa.rules
       if (rules?.maxLength && currentValues.length + values.length > rules.maxLength.value) {
+        if (__DEV__) {
+          warnArrayOperationRejected('append', name, 'maxLength', {
+            current: currentValues.length,
+            limit: rules.maxLength.value,
+          })
+        }
         return // Reject operation - maxLength exceeded
       }
 
@@ -166,6 +204,12 @@ export function createFieldArrayManager<FormValues>(
       // P2: Check maxLength rule before adding
       const rules = fa.rules
       if (rules?.maxLength && currentValues.length + values.length > rules.maxLength.value) {
+        if (__DEV__) {
+          warnArrayOperationRejected('prepend', name, 'maxLength', {
+            current: currentValues.length,
+            limit: rules.maxLength.value,
+          })
+        }
         return // Reject operation - maxLength exceeded
       }
 
@@ -192,6 +236,9 @@ export function createFieldArrayManager<FormValues>(
     const update = (index: number, value: unknown) => {
       const currentValues = (get(ctx.formData, name) || []) as unknown[]
       if (index < 0 || index >= currentValues.length) {
+        if (__DEV__) {
+          warnArrayIndexOutOfBounds('update', name, index, currentValues.length)
+        }
         return // Invalid index, do nothing
       }
       const newValues = [...currentValues]
@@ -210,11 +257,22 @@ export function createFieldArrayManager<FormValues>(
       const currentValues = (get(ctx.formData, name) || []) as unknown[]
 
       // Bounds check
-      if (index < 0 || index >= currentValues.length) return
+      if (index < 0 || index >= currentValues.length) {
+        if (__DEV__) {
+          warnArrayIndexOutOfBounds('remove', name, index, currentValues.length)
+        }
+        return
+      }
 
       // P2: Check minLength rule before removing
       const rules = fa.rules
       if (rules?.minLength && currentValues.length - 1 < rules.minLength.value) {
+        if (__DEV__) {
+          warnArrayOperationRejected('remove', name, 'minLength', {
+            current: currentValues.length,
+            limit: rules.minLength.value,
+          })
+        }
         return // Reject operation - minLength would be violated
       }
 
@@ -246,6 +304,12 @@ export function createFieldArrayManager<FormValues>(
       // P2: Check maxLength rule before adding
       const rules = fa.rules
       if (rules?.maxLength && currentValues.length + values.length > rules.maxLength.value) {
+        if (__DEV__) {
+          warnArrayOperationRejected('insert', name, 'maxLength', {
+            current: currentValues.length,
+            limit: rules.maxLength.value,
+          })
+        }
         return // Reject operation - maxLength exceeded
       }
 
@@ -289,6 +353,10 @@ export function createFieldArrayManager<FormValues>(
         indexA >= currentValues.length ||
         indexB >= currentValues.length
       ) {
+        if (__DEV__) {
+          const invalidIndex = indexA < 0 || indexA >= currentValues.length ? indexA : indexB
+          warnArrayIndexOutOfBounds('swap', name, invalidIndex, currentValues.length)
+        }
         return // Invalid indices, do nothing
       }
 
@@ -319,6 +387,10 @@ export function createFieldArrayManager<FormValues>(
 
       // Bounds validation: reject invalid indices
       if (from < 0 || from >= currentValues.length || to < 0) {
+        if (__DEV__) {
+          const invalidIndex = from < 0 || from >= currentValues.length ? from : to
+          warnArrayIndexOutOfBounds('move', name, invalidIndex, currentValues.length)
+        }
         return // Invalid indices, do nothing
       }
 
@@ -370,11 +442,83 @@ export function createFieldArrayManager<FormValues>(
       }
     }
 
+    const removeAll = () => {
+      // Check minLength rule - if minLength > 0, reject
+      const rules = fa.rules
+      if (rules?.minLength && rules.minLength.value > 0) {
+        if (__DEV__) {
+          warnArrayOperationRejected('removeAll', name, 'minLength', {
+            current: fa.items.value.length,
+            limit: rules.minLength.value,
+          })
+        }
+        return // Reject operation - minLength would be violated
+      }
+
+      // Clear form data array
+      set(ctx.formData, name, [])
+
+      // Clear items tracking
+      fa.items.value = []
+      rebuildIndexCache()
+
+      // Mark dirty
+      ctx.dirtyFields.value = { ...ctx.dirtyFields.value, [name]: true }
+
+      if (ctx.options.mode === 'onChange') {
+        validate(name)
+      }
+    }
+
+    const removeMany = (indices: number[]) => {
+      const currentValues = (get(ctx.formData, name) || []) as unknown[]
+
+      // Validate indices and filter to valid ones
+      const validIndices = indices.filter((i) => i >= 0 && i < currentValues.length)
+
+      if (validIndices.length === 0) return
+
+      // Check minLength rule
+      const rules = fa.rules
+      const remainingCount = currentValues.length - validIndices.length
+      if (rules?.minLength && remainingCount < rules.minLength.value) {
+        if (__DEV__) {
+          warnArrayOperationRejected('removeMany', name, 'minLength', {
+            current: currentValues.length,
+            limit: rules.minLength.value,
+          })
+        }
+        return // Reject operation - minLength would be violated
+      }
+
+      // Sort descending to remove from highest index first (prevents shifting issues)
+      const sortedIndices = [...new Set(validIndices)].sort((a, b) => b - a)
+
+      // Create set of indices to remove for O(1) lookup
+      const indicesToRemove = new Set(sortedIndices)
+
+      // Filter out removed values
+      const newValues = currentValues.filter((_, i) => !indicesToRemove.has(i))
+      set(ctx.formData, name, newValues)
+
+      // Remove items by indices
+      fa.items.value = fa.items.value.filter((_, i) => !indicesToRemove.has(i))
+      rebuildIndexCache()
+
+      ctx.dirtyFields.value = { ...ctx.dirtyFields.value, [name]: true }
+
+      if (ctx.options.mode === 'onChange') {
+        validate(name)
+      }
+    }
+
     return {
       value: fa.items.value,
       append,
       prepend,
       remove: removeAt,
+      removeAll,
+      removeMany,
       insert,
       swap,
       move,

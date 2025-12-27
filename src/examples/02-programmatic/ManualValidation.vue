@@ -109,7 +109,7 @@ const form = useForm({
   mode: 'onSubmit', // No automatic validation - we'll do it manually
 })
 
-const { handleSubmit, formState, validate, getValue } = form
+const { handleSubmit, formState, validate, getValues } = form
 
 // Validation state
 const validatingEmail = ref(false)
@@ -131,7 +131,7 @@ async function validateEmail() {
     if (isValid) {
       // Simulate API check for email availability
       await new Promise((resolve) => setTimeout(resolve, 500))
-      const email = getValue('email')
+      const email = getValues('email')
       const isTaken = email === 'taken@example.com'
 
       emailCheckResult.value = isTaken
@@ -156,7 +156,7 @@ async function validateUsername() {
     if (isValid) {
       // Simulate API check for username availability
       await new Promise((resolve) => setTimeout(resolve, 500))
-      const username = getValue('username')
+      const username = getValues('username')
       const isTaken = username === 'admin' || username === 'root'
 
       usernameCheckResult.value = isTaken
@@ -192,7 +192,7 @@ const codeSnippets = [
   {
     title: 'Validate Field',
     language: 'typescript' as const,
-    code: `const { validate, getValue } = useForm({ schema })
+    code: `const { validate, getValues } = useForm({ schema })
 
 // Validate a specific field
 async function checkEmail() {
@@ -200,7 +200,7 @@ async function checkEmail() {
 
   if (isValid) {
     // Field passed validation - do additional checks
-    const email = getValue('email')
+    const email = getValues('email')
     const available = await checkEmailAvailability(email)
   } else {
     // Field has errors - they're now in formState.errors

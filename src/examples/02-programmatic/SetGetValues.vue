@@ -1,8 +1,8 @@
 <template>
   <ExampleLayout
     title="Set & Get Values"
-    description="Programmatically read and write form values with setValue() and getValue(). Useful for loading data from APIs, copying between fields, or implementing presets."
-    :features="['setValue()', 'getValue()', 'Programmatic control']"
+    description="Programmatically read and write form values with setValue() and getValues(). Useful for loading data from APIs, copying between fields, or implementing presets."
+    :features="['setValue()', 'getValues()', 'Programmatic control']"
     :code-snippets="codeSnippets"
   >
     <FormProvider :form="form">
@@ -42,7 +42,7 @@
 
         <!-- Current Values Display -->
         <div class="values-panel">
-          <h4>Current Values (via getValue):</h4>
+          <h4>Current Values (via getValues):</h4>
           <div class="values-grid">
             <div>
               <strong>Shipping:</strong>
@@ -90,7 +90,7 @@ const form = useForm({
   mode: 'onBlur',
 })
 
-const { handleSubmit, formState, setValue, getValue, reset } = form
+const { handleSubmit, formState, setValue, getValues, reset } = form
 
 // Presets data
 const presets = {
@@ -120,11 +120,11 @@ function loadPreset(preset: 'john' | 'jane') {
 }
 
 function copyShippingToBilling() {
-  // Using getValue to read shipping values
-  const shippingName = getValue('shipping.name')
-  const shippingStreet = getValue('shipping.street')
-  const shippingCity = getValue('shipping.city')
-  const shippingZip = getValue('shipping.zip')
+  // Using getValues to read shipping values
+  const shippingName = getValues('shipping.name')
+  const shippingStreet = getValues('shipping.street')
+  const shippingCity = getValues('shipping.city')
+  const shippingZip = getValues('shipping.zip')
 
   // Using setValue to write to billing
   setValue('billing.name', shippingName ?? '')
@@ -141,10 +141,10 @@ function clearForm() {
 const shippingValues = computed(() =>
   JSON.stringify(
     {
-      name: getValue('shipping.name'),
-      street: getValue('shipping.street'),
-      city: getValue('shipping.city'),
-      zip: getValue('shipping.zip'),
+      name: getValues('shipping.name'),
+      street: getValues('shipping.street'),
+      city: getValues('shipping.city'),
+      zip: getValues('shipping.zip'),
     },
     null,
     2,
@@ -154,10 +154,10 @@ const shippingValues = computed(() =>
 const billingValues = computed(() =>
   JSON.stringify(
     {
-      name: getValue('billing.name'),
-      street: getValue('billing.street'),
-      city: getValue('billing.city'),
-      zip: getValue('billing.zip'),
+      name: getValues('billing.name'),
+      street: getValues('billing.street'),
+      city: getValues('billing.city'),
+      zip: getValues('billing.zip'),
     },
     null,
     2,
@@ -186,18 +186,18 @@ setValue('addresses.0.street', '123 Main St')
 // or if field has been touched`,
   },
   {
-    title: 'getValue',
+    title: 'getValues',
     language: 'typescript' as const,
-    code: `const { getValue } = useForm({ schema })
+    code: `const { getValues } = useForm({ schema })
 
 // Get a simple field value
-const email = getValue('email')
+const email = getValues('email')
 
 // Get nested field value
-const city = getValue('shipping.city')
+const city = getValues('shipping.city')
 
 // Returns undefined if path doesn't exist
-const unknown = getValue('nonexistent') // undefined`,
+const unknown = getValues('nonexistent') // undefined`,
   },
   {
     title: 'Copy Pattern',
@@ -207,7 +207,7 @@ function copyShippingToBilling() {
   const fields = ['name', 'street', 'city', 'zip']
 
   for (const field of fields) {
-    const value = getValue(\`shipping.\${field}\`)
+    const value = getValues(\`shipping.\${field}\`)
     setValue(\`billing.\${field}\`, value ?? '')
   }
 }`,
