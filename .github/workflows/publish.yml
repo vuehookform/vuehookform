@@ -18,14 +18,12 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 24
+          node-version-file: '.nvmrc'
           registry-url: 'https://registry.npmjs.org'
+          cache: 'npm'
 
-      - name: Clean and install dependencies
-        run: rm -rf node_modules package-lock.json && npm install
-
+      - run: npm ci
       - run: npm run test:run
-
       - run: npm run build:lib
 
       - run: npm publish
