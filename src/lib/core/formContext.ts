@@ -51,13 +51,13 @@ export interface FormContext<FormValues> {
   defaultValuesError: Ref<unknown>
   isSubmitSuccessful: Ref<boolean>
 
-  // P2: Validation state tracking
+  // Validation state tracking
   validatingFields: ShallowRef<Record<string, boolean>>
 
-  // P2: External errors from server/parent (merged with validation errors)
+  // External errors from server/parent (merged with validation errors)
   externalErrors: ShallowRef<FieldErrors<FormValues>>
 
-  // P2: Delayed error display tracking
+  // Delayed error display tracking
   errorDelayTimers: Map<string, ReturnType<typeof setTimeout>>
   pendingErrors: Map<string, FieldErrorValue>
 
@@ -126,13 +126,13 @@ export function createFormContext<TSchema extends ZodType>(
   const defaultValuesError = ref<unknown>(null)
   const isSubmitSuccessful = ref(false)
 
-  // P2: Validation state tracking - which fields are currently validating
+  // Validation state tracking - which fields are currently validating
   const validatingFields = shallowRef<Record<string, boolean>>({})
 
-  // P2: External errors from server/parent
+  // External errors from server/parent
   const externalErrors = shallowRef<FieldErrors<FormValues>>({})
 
-  // P2: Delayed error display tracking
+  // Delayed error display tracking
   const errorDelayTimers = new Map<string, ReturnType<typeof setTimeout>>()
   const pendingErrors = new Map<string, FieldErrorValue>()
 
@@ -153,7 +153,7 @@ export function createFormContext<TSchema extends ZodType>(
   // Reset generation counter (incremented on each reset to invalidate in-flight validations)
   const resetGeneration = ref(0)
 
-  // P2: Watch external values prop for changes
+  // Watch external values prop for changes
   if (options.values !== undefined) {
     // Set initial values from prop (if provided and not loading async defaults)
     const initialValues = toValue(options.values)
@@ -193,7 +193,7 @@ export function createFormContext<TSchema extends ZodType>(
     )
   }
 
-  // P2: Watch external errors prop for changes
+  // Watch external errors prop for changes
   if (options.errors !== undefined) {
     // Set initial external errors
     const initialErrors = toValue(options.errors)

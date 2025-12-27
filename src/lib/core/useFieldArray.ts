@@ -68,7 +68,7 @@ export function createFieldArrayManager<FormValues>(
         values: existingValues,
         // Index cache stored on fieldArray for O(1) lookups, shared across fields() calls
         indexCache: new Map<string, number>(),
-        // P2: Store rules for validation
+        // Store rules for validation
         rules: options?.rules,
       }
       ctx.fieldArrays.set(name, fieldArray)
@@ -122,7 +122,7 @@ export function createFieldArrayManager<FormValues>(
     }
 
     /**
-     * P2: Handle focus after array operations
+     * Handle focus after array operations
      */
     const handleFocus = async (
       baseIndex: number,
@@ -150,7 +150,7 @@ export function createFieldArrayManager<FormValues>(
     }
 
     /**
-     * P2: Normalize input to always be an array (supports batch operations)
+     * Normalize input to always be an array (supports batch operations)
      */
     const normalizeToArray = <T>(value: T | T[]): T[] => {
       return Array.isArray(value) ? value : [value]
@@ -163,7 +163,7 @@ export function createFieldArrayManager<FormValues>(
       const currentValues = (get(ctx.formData, name) || []) as unknown[]
       const insertIndex = currentValues.length // Items will be added starting at this index
 
-      // P2: Check maxLength rule before adding
+      // Check maxLength rule before adding
       const rules = fa.rules
       if (rules?.maxLength && currentValues.length + values.length > rules.maxLength.value) {
         if (__DEV__) {
@@ -191,7 +191,7 @@ export function createFieldArrayManager<FormValues>(
         validate(name)
       }
 
-      // P2: Handle focus
+      // Handle focus
       handleFocus(insertIndex, values.length, focusOptions)
     }
 
@@ -201,7 +201,7 @@ export function createFieldArrayManager<FormValues>(
 
       const currentValues = (get(ctx.formData, name) || []) as unknown[]
 
-      // P2: Check maxLength rule before adding
+      // Check maxLength rule before adding
       const rules = fa.rules
       if (rules?.maxLength && currentValues.length + values.length > rules.maxLength.value) {
         if (__DEV__) {
@@ -229,7 +229,7 @@ export function createFieldArrayManager<FormValues>(
         validate(name)
       }
 
-      // P2: Handle focus (items added at index 0)
+      // Handle focus (items added at index 0)
       handleFocus(0, values.length, focusOptions)
     }
 
@@ -264,7 +264,7 @@ export function createFieldArrayManager<FormValues>(
         return
       }
 
-      // P2: Check minLength rule before removing
+      // Check minLength rule before removing
       const rules = fa.rules
       if (rules?.minLength && currentValues.length - 1 < rules.minLength.value) {
         if (__DEV__) {
@@ -301,7 +301,7 @@ export function createFieldArrayManager<FormValues>(
 
       const currentValues = (get(ctx.formData, name) || []) as unknown[]
 
-      // P2: Check maxLength rule before adding
+      // Check maxLength rule before adding
       const rules = fa.rules
       if (rules?.maxLength && currentValues.length + values.length > rules.maxLength.value) {
         if (__DEV__) {
@@ -339,7 +339,7 @@ export function createFieldArrayManager<FormValues>(
         validate(name)
       }
 
-      // P2: Handle focus
+      // Handle focus
       handleFocus(clampedIndex, values.length, focusOptions)
     }
 

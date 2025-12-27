@@ -97,7 +97,7 @@ function createFieldError(
  */
 export function createValidation<FormValues>(ctx: FormContext<FormValues>) {
   /**
-   * Schedule error display with optional delay (P2: delayError feature)
+   * Schedule error display with optional delay (delayError feature)
    * If delayError > 0, the error will be shown after the delay.
    * If the field becomes valid before the delay completes, the error won't be shown.
    */
@@ -138,7 +138,7 @@ export function createValidation<FormValues>(ctx: FormContext<FormValues>) {
   }
 
   /**
-   * Cancel pending error and clear existing error for a field (P2: delayError feature)
+   * Cancel pending error and clear existing error for a field (delayError feature)
    */
   function cancelError(fieldPath: string): FieldErrors<FormValues> {
     // Cancel any pending delayed error
@@ -174,7 +174,7 @@ export function createValidation<FormValues>(ctx: FormContext<FormValues>) {
     // Get criteriaMode from options (default: 'firstError')
     const criteriaMode = ctx.options.criteriaMode || 'firstError'
 
-    // P2: Mark field(s) as validating
+    // Mark field(s) as validating
     const validatingKey = fieldPath || '_form'
     setValidating(ctx, validatingKey, true)
 
@@ -239,7 +239,7 @@ export function createValidation<FormValues>(ctx: FormContext<FormValues>) {
 
       return false
     } finally {
-      // P2: Clear validating state
+      // Clear validating state
       setValidating(ctx, validatingKey, false)
     }
   }

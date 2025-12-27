@@ -91,7 +91,7 @@ export function useForm<TSchema extends ZodType>(
     }
   }
 
-  // Create field array manager (pass setFocus for P2 focusOptions feature)
+  // Create field array manager (pass setFocus for focusOptions feature)
   // Wrap setFocus to accept string instead of Path<FormValues> for field array use
   const setFocusWrapper = (name: string) => setFocus(name as Path<FormValues>)
   const { fields } = createFieldArrayManager<FormValues>(ctx, validate, setFocusWrapper)
@@ -122,13 +122,13 @@ export function useForm<TSchema extends ZodType>(
         Object.keys(mergedErrors).length === 0,
       isSubmitting: ctx.isSubmitting.value,
       isLoading: ctx.isLoading.value,
-      // P2: isReady - form initialization complete
+      // isReady - form initialization complete
       isReady: !ctx.isLoading.value,
-      // P2: isValidating - any field is currently being validated
+      // isValidating - any field is currently being validated
       isValidating: Object.keys(ctx.validatingFields.value).some(
         (k) => ctx.validatingFields.value[k],
       ),
-      // P2: validatingFields - which fields are currently validating
+      // validatingFields - which fields are currently validating
       validatingFields: ctx.validatingFields.value,
       touchedFields: ctx.touchedFields.value,
       submitCount: ctx.submitCount.value,
@@ -237,7 +237,7 @@ export function useForm<TSchema extends ZodType>(
     // Increment reset generation to invalidate any in-flight validations
     ctx.resetGeneration.value++
 
-    // P2: Clear all pending error timers and validating state
+    // Clear all pending error timers and validating state
     clearAllPendingErrors()
     ctx.validatingFields.value = {}
 
@@ -305,7 +305,7 @@ export function useForm<TSchema extends ZodType>(
     // Increment reset generation to invalidate pending validations
     ctx.resetGeneration.value++
 
-    // P2: Clear error delay timer for this field
+    // Clear error delay timer for this field
     const errorTimer = ctx.errorDelayTimers.get(name)
     if (errorTimer) {
       clearTimeout(errorTimer)
@@ -383,10 +383,6 @@ export function useForm<TSchema extends ZodType>(
       return get(ctx.formData, name) as PathValue<FormValues, TPath>
     })
   }
-
-  // ========================================
-  // NEW P0/P1 FEATURES
-  // ========================================
 
   /**
    * Clear errors for one or more fields, or all errors
