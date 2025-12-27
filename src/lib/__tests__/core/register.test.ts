@@ -2,28 +2,9 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { useForm } from '../../useForm'
 import { z } from 'zod'
 import { nextTick } from 'vue'
+import { schemas, createInputEvent, createBlurEvent } from '../helpers/test-utils'
 
-const schema = z.object({
-  email: z.email(),
-  password: z.string().min(8),
-  name: z.string().min(2),
-  rememberMe: z.boolean().optional(),
-})
-
-/**
- * Helper to create an input event with the target element
- */
-function createInputEvent(element: HTMLInputElement): Event {
-  const event = new Event('input', { bubbles: true })
-  Object.defineProperty(event, 'target', { value: element, writable: false })
-  return event
-}
-
-function createBlurEvent(element: HTMLInputElement): Event {
-  const event = new Event('blur', { bubbles: true })
-  Object.defineProperty(event, 'target', { value: element, writable: false })
-  return event
-}
+const schema = schemas.withOptional
 
 describe('register', () => {
   let mockInput: HTMLInputElement

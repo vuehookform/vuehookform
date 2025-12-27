@@ -1,27 +1,8 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
 import { useForm } from '../../useForm'
-import { z } from 'zod'
+import { schemas, createInputEvent, createBlurEvent } from '../helpers/test-utils'
 
-const schema = z.object({
-  email: z.string().email('Invalid email'),
-  password: z.string().min(8, 'Password must be at least 8 characters'),
-  name: z.string().min(2, 'Name must be at least 2 characters'),
-})
-
-/**
- * Helper to create an input event with the target element
- */
-function createInputEvent(element: HTMLInputElement): Event {
-  const event = new Event('input', { bubbles: true })
-  Object.defineProperty(event, 'target', { value: element, writable: false })
-  return event
-}
-
-function createBlurEvent(element: HTMLInputElement): Event {
-  const event = new Event('blur', { bubbles: true })
-  Object.defineProperty(event, 'target', { value: element, writable: false })
-  return event
-}
+const schema = schemas.basicWithMessages
 
 describe('validation modes', () => {
   let mockInput: HTMLInputElement

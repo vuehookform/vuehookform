@@ -12,7 +12,7 @@ const threeLevelSchema = z.object({
       code: z.string().length(4, 'Department code must be 4 characters'),
       manager: z.object({
         name: z.string().min(2, 'Manager name required'),
-        email: z.string().email('Invalid manager email'),
+        email: z.email('Invalid manager email'),
         employeeId: z.string().min(5, 'Employee ID must be 5+ characters'),
       }),
     }),
@@ -33,7 +33,7 @@ const fourLevelSchema = z.object({
           firstName: z.string().min(1, 'First name required'),
           lastName: z.string().min(1, 'Last name required'),
           contact: z.object({
-            email: z.string().email('Invalid email'),
+            email: z.email('Invalid email'),
             phone: z.string().min(10, 'Phone must be 10+ digits'),
           }),
         }),
@@ -90,7 +90,7 @@ const deepArraySchema = z.object({
           name: z.string().min(1, 'Team name required'),
           lead: z.object({
             name: z.string().min(2, 'Lead name required'),
-            email: z.string().email('Invalid lead email'),
+            email: z.email('Invalid lead email'),
           }),
         }),
       ),

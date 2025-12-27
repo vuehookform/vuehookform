@@ -53,7 +53,7 @@ import { z } from 'zod'
 // Profile schema
 const profileSchema = z.object({
   username: z.string().min(3, 'Username must be at least 3 characters'),
-  email: z.string().email('Please enter a valid email'),
+  email: z.email('Please enter a valid email'),
   bio: z.string().max(200, 'Bio cannot exceed 200 characters').optional(),
   website: z.string().url('Please enter a valid URL').optional().or(z.literal('')),
 })

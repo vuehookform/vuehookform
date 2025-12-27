@@ -2,12 +2,9 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { ref, nextTick } from 'vue'
 import { useForm } from '../../useForm'
 import { z } from 'zod'
+import { schemas } from '../helpers/test-utils'
 
-const schema = z.object({
-  email: z.email(),
-  password: z.string().min(8),
-  name: z.string().min(2),
-})
+const schema = schemas.basic
 
 describe('useForm - values', () => {
   describe('getValues', () => {
@@ -358,7 +355,7 @@ describe('useForm - values', () => {
   describe('errors prop', () => {
     it('should merge external errors with validation errors', async () => {
       const errorsSchema = z.object({
-        email: z.string().email('Invalid email'),
+        email: z.email('Invalid email'),
         username: z.string().min(3, 'Too short'),
       })
       const externalErrors = ref({
@@ -407,7 +404,7 @@ describe('useForm - values', () => {
 
     it('should allow external errors to override validation errors', async () => {
       const errorsSchema = z.object({
-        email: z.string().email('Invalid email format'),
+        email: z.email('Invalid email format'),
       })
       const externalErrors = ref({
         email: 'Email already registered',

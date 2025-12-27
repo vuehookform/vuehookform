@@ -29,7 +29,7 @@ const contactSchema = z.object({
   contact: z.discriminatedUnion('method', [
     z.object({
       method: z.literal('email'),
-      email: z.string().email('Invalid email'),
+      email: z.email('Invalid email'),
       preferences: z.object({
         newsletter: z.boolean(),
         frequency: z.enum(['daily', 'weekly', 'monthly']),

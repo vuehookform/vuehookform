@@ -1,16 +1,11 @@
 import { describe, it, expect } from 'vitest'
 import { useForm } from '../../useForm'
 import { z } from 'zod'
+import { schemas } from '../helpers/test-utils'
 
-const schema = z.object({
-  users: z.array(
-    z.object({
-      name: z.string().min(1),
-      email: z.email(),
-    }),
-  ),
-})
+const schema = schemas.withArray
 
+// Custom schema for edge case tests with simple items
 const itemsSchema = z.object({
   items: z.array(z.object({ name: z.string() })),
 })

@@ -13,7 +13,7 @@ describe('delayError', () => {
 
   it('should delay error display when delayError is set', async () => {
     const schema = z.object({
-      email: z.string().email('Invalid email'),
+      email: z.email('Invalid email'),
     })
     const { formState, setValue, validate } = useForm({
       schema,
@@ -37,7 +37,7 @@ describe('delayError', () => {
 
   it('should cancel error if field becomes valid before delay', async () => {
     const schema = z.object({
-      email: z.string().email('Invalid email'),
+      email: z.email('Invalid email'),
     })
     const { formState, setValue, validate } = useForm({
       schema,
@@ -64,7 +64,7 @@ describe('delayError', () => {
 
   it('should clear pending errors on form reset', async () => {
     const schema = z.object({
-      email: z.string().email('Invalid email'),
+      email: z.email('Invalid email'),
     })
     const { formState, setValue, validate, reset } = useForm({
       schema,
@@ -86,7 +86,7 @@ describe('delayError', () => {
 
   it('should set error immediately when delayError is 0', async () => {
     const schema = z.object({
-      email: z.string().email('Invalid email'),
+      email: z.email('Invalid email'),
     })
     const { formState, setValue, validate } = useForm({
       schema,

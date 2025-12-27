@@ -31,7 +31,7 @@ describe('integration tests', () => {
 
   describe('complete form lifecycle', () => {
     const schema = z.object({
-      email: z.string().email('Invalid email'),
+      email: z.email('Invalid email'),
       password: z.string().min(8, 'Password too short'),
       confirmPassword: z.string(),
     })
@@ -280,7 +280,7 @@ describe('integration tests', () => {
 
   describe('custom validation + Zod validation', () => {
     const schema = z.object({
-      email: z.string().email('Invalid email format'),
+      email: z.email('Invalid email format'),
       username: z.string().min(3, 'Username too short'),
     })
 

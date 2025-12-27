@@ -4,10 +4,17 @@ import { z } from 'zod'
  * Common test schemas
  */
 export const schemas = {
+  // Basic schemas
   basic: z.object({
     email: z.email(),
     password: z.string().min(8),
     name: z.string().min(2),
+  }),
+
+  basicWithMessages: z.object({
+    email: z.email('Invalid email'),
+    password: z.string().min(8, 'Password must be at least 8 characters'),
+    name: z.string().min(2, 'Name must be at least 2 characters'),
   }),
 
   withOptional: z.object({
@@ -17,27 +24,12 @@ export const schemas = {
     rememberMe: z.boolean().optional(),
   }),
 
-  nested: z.object({
-    user: z.object({
-      email: z.email(),
-      profile: z.object({
-        bio: z.string(),
-        age: z.number().optional(),
-      }),
-    }),
-  }),
-
-  withArray: z.object({
-    users: z.array(
-      z.object({
-        name: z.string().min(1),
-        email: z.email(),
-      }),
-    ),
-  }),
-
-  simpleArray: z.object({
-    tags: z.array(z.string()),
+  basicWithAge: z.object({
+    email: z.email('Invalid email'),
+    password: z.string().min(8, 'Password must be at least 8 characters'),
+    name: z.string().min(2, 'Name must be at least 2 characters'),
+    rememberMe: z.boolean().optional(),
+    age: z.coerce.number().optional(),
   }),
 
   extended: z.object({
@@ -49,6 +41,49 @@ export const schemas = {
     gender: z.string().optional(),
     age: z.coerce.number().optional(),
     birthdate: z.string().optional(),
+  }),
+
+  // Nested schemas
+  nested: z.object({
+    user: z.object({
+      email: z.email(),
+      profile: z.object({
+        bio: z.string(),
+        age: z.number().optional(),
+      }),
+    }),
+  }),
+
+  nestedWithMessages: z.object({
+    user: z.object({
+      email: z.email('Invalid email'),
+      profile: z.object({
+        bio: z.string().min(1, 'Bio is required'),
+      }),
+    }),
+  }),
+
+  // Array schemas
+  withArray: z.object({
+    users: z.array(
+      z.object({
+        name: z.string().min(1),
+        email: z.email(),
+      }),
+    ),
+  }),
+
+  withArrayMessages: z.object({
+    users: z.array(
+      z.object({
+        name: z.string().min(1, 'Name is required'),
+        email: z.email('Invalid email'),
+      }),
+    ),
+  }),
+
+  simpleArray: z.object({
+    tags: z.array(z.string()),
   }),
 }
 
@@ -151,5 +186,9 @@ export function waitFor(ms = 0): Promise<void> {
  * Type exports for convenience
  */
 export type BasicSchema = typeof schemas.basic
+export type BasicWithMessagesSchema = typeof schemas.basicWithMessages
+export type BasicWithAgeSchema = typeof schemas.basicWithAge
 export type NestedSchema = typeof schemas.nested
+export type NestedWithMessagesSchema = typeof schemas.nestedWithMessages
 export type WithArraySchema = typeof schemas.withArray
+export type WithArrayMessagesSchema = typeof schemas.withArrayMessages

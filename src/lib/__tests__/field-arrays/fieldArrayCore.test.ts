@@ -1,19 +1,9 @@
 import { describe, it, expect } from 'vitest'
 import { useForm } from '../../useForm'
-import { z } from 'zod'
+import { schemas } from '../helpers/test-utils'
 
-const schema = z.object({
-  users: z.array(
-    z.object({
-      name: z.string().min(1),
-      email: z.email(),
-    }),
-  ),
-})
-
-const simpleArraySchema = z.object({
-  tags: z.array(z.string()),
-})
+const schema = schemas.withArray
+const simpleArraySchema = schemas.simpleArray
 
 describe('field arrays - core', () => {
   describe('initialization', () => {

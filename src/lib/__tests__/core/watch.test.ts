@@ -2,13 +2,11 @@ import { describe, it, expect } from 'vitest'
 import { useForm } from '../../useForm'
 import { z } from 'zod'
 import { nextTick } from 'vue'
+import { schemas } from '../helpers/test-utils'
 
-const schema = z.object({
-  email: z.email(),
-  password: z.string().min(8),
-  name: z.string().min(2),
-})
+const schema = schemas.basic
 
+// Watch tests need age to be required (not optional) for proper test assertions
 const nestedSchema = z.object({
   user: z.object({
     email: z.email(),

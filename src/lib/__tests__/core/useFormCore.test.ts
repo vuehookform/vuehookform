@@ -1,12 +1,9 @@
 import { describe, it, expect, vi } from 'vitest'
 import { useForm } from '../../useForm'
 import { z } from 'zod'
+import { schemas } from '../helpers/test-utils'
 
-const schema = z.object({
-  email: z.email(),
-  password: z.string().min(8),
-  name: z.string().min(2),
-})
+const schema = schemas.basic
 
 describe('useForm - core', () => {
   describe('core functionality', () => {

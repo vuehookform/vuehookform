@@ -1,36 +1,10 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { useForm } from '../../useForm'
-import { z } from 'zod'
 import { nextTick } from 'vue'
+import { schemas, createInputEvent, createBlurEvent } from '../helpers/test-utils'
 
-const schema = z.object({
-  email: z.string().email('Invalid email'),
-  password: z.string().min(8, 'Password must be at least 8 characters'),
-  name: z.string().min(2, 'Name must be at least 2 characters'),
-  rememberMe: z.boolean().optional(),
-  age: z.coerce.number().optional(),
-})
-
-const nestedSchema = z.object({
-  user: z.object({
-    email: z.string().email('Invalid email'),
-    profile: z.object({
-      bio: z.string().min(1, 'Bio is required'),
-    }),
-  }),
-})
-
-function createInputEvent(element: HTMLInputElement): Event {
-  const event = new Event('input', { bubbles: true })
-  Object.defineProperty(event, 'target', { value: element, writable: false })
-  return event
-}
-
-function createBlurEvent(element: HTMLInputElement): Event {
-  const event = new Event('blur', { bubbles: true })
-  Object.defineProperty(event, 'target', { value: element, writable: false })
-  return event
-}
+const schema = schemas.basicWithAge
+const nestedSchema = schemas.nestedWithMessages
 
 describe('controlled inputs', () => {
   let mockInput: HTMLInputElement
